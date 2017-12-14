@@ -8,13 +8,15 @@ const userTwoId = new ObjectID();
 
 const todos = [{
     _id:new ObjectID(),
-    text:'todo1'
+    text:'todo1',
+    //_creator:userOneId
 },
 
 {_id:new ObjectID(),
     text:'todo2',
     completed:true,
-    completedAt:123
+    completedAt:123,
+    //_creator:userTwoId
 }];
 
 const users = [{

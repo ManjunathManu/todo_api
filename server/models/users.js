@@ -56,6 +56,12 @@ UserSchema.methods.generateAuthToken = function () {
   });
 };
 
+UserSchema.methods.deleteToken = function(token){
+  var user = this;
+
+  return user.update({$pull:{tokens:{token} } });
+}
+
 UserSchema.statics.findByToken = function (token){
   var User = this;
   var decoded;
@@ -111,6 +117,15 @@ UserSchema.statics.findByCredentials = function (email, password) {
     });
   });
 };
+
+UserSchema.statics.getUsers = function(){
+  var User = this;
+  return User.find({}).then((users)=>{
+    return users;
+  }).catch((e)=>{
+    return err;
+  })
+}
 
 var User = mongoose.model('User', UserSchema);
 module.exports = {User}
