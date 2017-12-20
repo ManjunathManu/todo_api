@@ -1,5 +1,6 @@
 require('./config/config');
 
+const path = require('path');
 const  bcrypt = require('bcryptjs');
 const _ = require('lodash');
 const express = require('express');
@@ -9,12 +10,13 @@ const {ObjectID} = require('mongodb');
 var {mongoose} = require('./db/mongoose');
 var {Todo} = require('./models/todo');
 var {User} = require('./models/users');
-var {authenticate} = require('./middleware/authenticate')
-
+var {authenticate} = require('./middleware/authenticate');
+const publicPath = path.join(__dirname,'./public');
 var app = express();
 const port = process.env.PORT;
 
 app.use(bodyParser.json());
+app.use(express.static(publicPath));
 
 app.post('/todos', authenticate, (req, res) => {
   var todo = new Todo({
@@ -107,7 +109,10 @@ app.post('/users', (req, res) => {
   user.save().then(() => {
     return user.generateAuthToken();
   }).then((token) => {
-    res.header('x-auth', token).send(user);
+    // res.header('x-auth', token).send(user);
+    res.header('Authorization',`Bearer ${token}`).send(user);
+    // res.header('Authorization:Bearer', token).send(user);
+    
     
   }).catch((e) => {
     res.status(400).send(e);
@@ -119,7 +124,10 @@ app.post('/users/login',(req, res)=>{
   //res.send(body);
   User.findByCredentials(body.email, body.password).then((user)=>{
     return user.generateAuthToken().then((token)=>{
-      res.header('x-auth',token).send(user);
+      // res.header('x-auth',token).send(user);
+      res.header('Authorization',`Bearer ${token}`).send(user);
+      // res.header('Authorization:Bearer', token).send(user);
+      
     })
 
   }).catch((err)=>{
