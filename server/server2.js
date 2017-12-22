@@ -12,12 +12,22 @@ var {Todo} = require('./models/todo');
 var {User} = require('./models/users');
 var {authenticate} = require('./middleware/authenticate');
 const publicPath = path.join(__dirname,'./public');
+
+
+const formidable = require('express-formidable');
+
 var app = express();
 const port = process.env.PORT;
 
-app.use(bodyParser.json());
+app.use(express.json())
+app.use(bodyParser.urlencoded({ extended: true })); // support encoded bodies
 app.use(express.static(publicPath));
-
+//app.use(formidable());
+// app.use(formidable({
+//   encoding: 'utf-8',
+//   uploadDir: '/my/dir',
+//   multiples: true // req.files to be arrays of files 
+// }) );
 app.post('/todos', authenticate, (req, res) => {
   var todo = new Todo({
     text: req.body.text,
@@ -34,6 +44,9 @@ app.post('/todos', authenticate, (req, res) => {
 app.get('/todos', authenticate, (req, res) => {
   Todo.find({_creator:req.user._id}).then((todos) => {
     res.send({todos});
+    //console.log({todos});
+
+    // console.log(res.body)
   }, (e) => {
     res.status(400).send(e);
   });
@@ -101,36 +114,40 @@ app.patch('/todos/:id', authenticate, (req, res) => {
   })
 });
 
+
 // POST /users
 app.post('/users', (req, res) => {
+  // console.log(req.body);
   var body = _.pick(req.body, ['email', 'password']);
+  //  console.log(body);
   var user = new User(body);
 
   user.save().then(() => {
     return user.generateAuthToken();
   }).then((token) => {
     // res.header('x-auth', token).send(user);
+    // console.log("1111111111111111111111111111111");
     res.header('Authorization',`Bearer ${token}`).send(user);
     // res.header('Authorization:Bearer', token).send(user);
     
     
   }).catch((e) => {
-    res.status(400).send(e);
+    console.log("fsafhafga", e)
+    res.status(400).send(e.message);
   })
 });
 
 app.post('/users/login',(req, res)=>{
   var body = _.pick(req.body, ['email', 'password']);
   //res.send(body);
+  // console.log(body);
   User.findByCredentials(body.email, body.password).then((user)=>{
     return user.generateAuthToken().then((token)=>{
       // res.header('x-auth',token).send(user);
-      res.header('Authorization',`Bearer ${token}`).send(user);
-      // res.header('Authorization:Bearer', token).send(user);
-      
+       res.set('Authorization',`Bearer ${token}`).send(user);
     })
-
   }).catch((err)=>{
+    console.log(err);
     return res.status(401).send(err);
   })
 });

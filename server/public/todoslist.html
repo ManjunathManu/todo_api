@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Todos</title>
+        <link rel="stylesheet" type="text/css" href="todoslist.css">
+    </head>
+    <body>
+        <div id="myDIV" class="header">
+            <h2>My To Do List</h2>
+            <input type="text" id="myInput" placeholder="Title...">
+            <span onclick="newElement()" class="addBtn">Add</span>
+          </div>
+        <div id="todos">
+            
+        </div>  
+          <!-- <ul id="myUL">
+            <li>Hit the gym</li>
+            <li class="checked">Pay bills</li>
+            <li>Meet George</li>
+            <li>Buy eggs</li>
+            <li>Read a book</li>
+            <li>Organize office</li>
+          </ul> -->
+
+        <button id="logoutBtn" type="click" >Logout</button>
+
+        <script src="libs/jquery-3.2.1.min.js"></script>
+        <!-- <script data-main="scripts/main.js" src="libs/require.js"></script> -->
+        <script src="todoslist.js"></script>
+    </body>
+</html>

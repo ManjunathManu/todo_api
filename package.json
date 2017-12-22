@@ -24,10 +24,12 @@
     "jsonwebtoken": "^8.1.0",
     "mongodb": "^2.2.5",
     "mongoose": "^4.13.6",
+    "socket.io": "^2.0.4",
     "validator": "^9.2.0"
   },
   "devDependencies": {
     "expect": "^21.2.1",
+    "express-formidable": "^1.0.0",
     "mocha": "^4.0.1",
     "nodemon": "^1.12.5",
     "supertest": "^3.0.0"
