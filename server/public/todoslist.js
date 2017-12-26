@@ -1,11 +1,12 @@
+
+
  $(document).ready(function(){
     var ul = jQuery('<ul></ul>').addClass("todosList");
-    var deleteButton = $('<button />').addClass('deleteButton').text('Delete');
      $("#logoutBtn").on('click',function(){
         var token = window.localStorage.getItem('token');
          $.ajax({
              type:"DELETE",
-             url:"http://localhost:3000/users/me/token",
+             url:"/users/me/token",
              beforeSend:function(xhr){xhr.setRequestHeader('Authorization', token)},
              success: function(data) { //alert('Success!',data);
              window.localStorage.clear();
@@ -15,11 +16,11 @@
      });
      $.ajax({
          type:"GET",
-         url:"http://localhost:3000/todos",
+         url:"/todos",
          beforeSend:function(xhr){xhr.setRequestHeader('Authorization', window.localStorage.getItem('token'))},
          success:function(todos){
            todos.todos.forEach(function(todo){
-               ul.append(jQuery('<li></li>').text(todo.text).append(jQuery('<button>delete</button>').addClass("delButton")));  
+            ul.append(jQuery('<li></li>').text(todo.text).append(jQuery('<span></span>').text('\u00D7').addClass('close'))); 
             })
              jQuery("#todos").html(ul);
             }
@@ -32,28 +33,61 @@
          $.ajax({
              type:"POST",
              data:{text:jQuery("#myInput").val()},
-             url:"http://localhost:3000/todos",
+             url:"/todos",
              beforeSend:function(xhr){xhr.setRequestHeader('Authorization', window.localStorage.getItem('token'))},
              success:function(todo){
                  //console.log(todo);
                 jQuery("#myInput").val("")
-                 ul.append(jQuery('<li></li>').text(todo.text));
-                 deleteButton.appendTo('ul li');
+                 ul.append(jQuery('<li></li>').text(todo.text).append(jQuery('<span></span>').text('\u00D7').addClass('close')));
                  jQuery("#todos").html(ul);
                 }
          })
      });
 
-     var myNodelist = document.getElementsByTagName("LI");
-     var i;
-     for (i = 0; i < myNodelist.length; i++) {
-       var span = document.createElement("SPAN");
-       var txt = document.createTextNode("\u00D7");
-       span.className = "close";
-       span.appendChild(txt);
-       myNodelist[i].appendChild(span);
-     }
+     $(document).on("click", ".close", function(){
+        var text=$(this).parent().clone().children().remove().end().text();
+        $(this).parent().hide();
+        $.ajax({
+            type:"post",
+            url:"/todos/findId",
+            data:{text:text},
+            beforeSend:function(xhr){xhr.setRequestHeader('Authorization', window.localStorage.getItem('token'))},
+            success:function(id){
+                console.log(text,id);
+                $.ajax({
+                    type:"delete",
+                    url:"http://localhost:3000/todos/"+id,
+                    beforeSend:function(xhr){xhr.setRequestHeader('Authorization', window.localStorage.getItem('token'))},
+                    success:function(todo){
+                        console.log(todo);
+                    }
+            
+                })
+            }
+        })
+     });
 
+    //  $(document).on('dblclick', 'li', function () {
+    //     oriVal = $(this).text();
+    //     //$(this).text("");
+    //     input = $("<input type='text'>");
+    //     input.appendTo($(this)).focus();
+    
+    // });
+    
+    // $(document).on('focusout', 'input', function () {
+    //     if (input.val() != "") {
+    //         newInput = input.val();
+    //         $(this).hide();
+    //         $($(this).parent()).text(newInput);
+    //     } else {
+    //         $($(this)).text(oriVal);
+    //     }
+    
+    // });
+    $(document).on('click', 'li', function(){
+        $(this).toggleClass("checked");
+    })
  });
  
  

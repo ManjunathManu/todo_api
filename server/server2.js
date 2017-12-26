@@ -44,9 +44,6 @@ app.post('/todos', authenticate, (req, res) => {
 app.get('/todos', authenticate, (req, res) => {
   Todo.find({_creator:req.user._id}).then((todos) => {
     res.send({todos});
-    //console.log({todos});
-
-    // console.log(res.body)
   }, (e) => {
     res.status(400).send(e);
   });
@@ -70,15 +67,32 @@ app.get('/todos/:id',authenticate, (req, res) => {
   });
 });
 
+app.post('/todos/findId', authenticate, (req, res)=>{
+  var text = req.body.text;
+  if(text === " "){
+    return res.status(404).send();
+  }
+  Todo.findOne({text, _creator:req.user._id}).then((todo)=>{
+    if(!todo){
+      return res.status(404).send();
+    }
+    res.send(todo._id);
+  }).catch((e)=>{
+    res.status(404).send();
+  });
+});
+
 app.delete('/todos/:id',authenticate, (req, res) => {
   var id = req.params.id;
-
+  console.log(id);
   if (!ObjectID.isValid(id)) {
+    console.log('invalid id')
     return res.status(404).send();
   }
 
   Todo.findOneAndRemove({_id:id, _creator:req.user._id}).then((todo) => {
     if (!todo) {
+      console.log('no todo')
       return res.status(404).send();
     }
 
