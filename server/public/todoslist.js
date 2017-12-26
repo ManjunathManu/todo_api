@@ -1,6 +1,41 @@
 
 
  $(document).ready(function(){
+    $.ajaxSetup({
+        error: function(jqXHR, exception) {
+            if (jqXHR.status === 0) {
+                alert('Not connect.\n Verify Network.');
+            } else if (jqXHR.status == 404) {
+                alert('Requested page not found. [404]');
+            } else if (jqXHR.status == 500) {
+                alert('Internal Server Error [500].');
+            } else if (exception === 'parsererror') {
+                alert('Requested JSON parse failed.');
+            } else if (exception === 'timeout') {
+                alert('Time out error.');
+            } else if (exception === 'abort') {
+                alert('Ajax request aborted.');
+            }else if(jqXHR.status == 401){
+                alert('Unauthorized user')
+            } else if(jqXHR.status == 400){
+               alert('Bad request:User already exists');
+            }else {
+                alert('Uncaught Error.\n' + jqXHR.responseText);
+            }
+        }
+    });
+    
+        
+          if (window.history && window.history.pushState) {
+        
+            window.history.pushState('forward', null, './#forward');
+        
+            $(window).on('popstate', function() {
+              alert('This will logs you out');
+              $("#logoutBtn").click();
+            });
+        
+          }
     var ul = jQuery('<ul></ul>').addClass("todosList");
      $("#logoutBtn").on('click',function(){
         var token = window.localStorage.getItem('token');
