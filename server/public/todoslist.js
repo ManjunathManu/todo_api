@@ -56,7 +56,7 @@
                 console.log(text,id);
                 $.ajax({
                     type:"delete",
-                    url:"http://localhost:3000/todos/"+id,
+                    url:"/todos/"+id,
                     beforeSend:function(xhr){xhr.setRequestHeader('Authorization', window.localStorage.getItem('token'))},
                     success:function(todo){
                         console.log(todo);
