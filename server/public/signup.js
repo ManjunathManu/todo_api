@@ -1,9 +1,32 @@
 $(document).ready(function(){
 
-     history.pushState({ page: 1 }, "Title 1", "#no-back");
-    window.onhashchange = function (event) {
-      window.location.hash = "no-back";
-    };
+    //  history.pushState({ page: 1 }, "Title 1", "#no-back");
+    // window.onhashchange = function (event) {
+    //   window.location.hash = "no-back";
+    // };
+    // $(window).on('unload',function(){
+    //     if(localStorage.getItem('token')){
+    //         alert('Alreadylogged in');
+    //         // console.log("hahahahahhaha", token);
+    //         window.location.href="todoslist.html"
+    //     }else{
+    //         alert('Not logged in');
+    //         window.location.href="index.html"
+    //     } 
+    // })
+    window.history.pushState('', null,'./');
+    $(window).on('popstate',function(){
+        location.reload(true);
+    });
+    var checked=false;
+    $('#loginkeeping').on('click',function() {
+        if(this.checked){
+             checked = true;
+        } else{
+            checked = false;
+        } 
+    });
+    
 
     $.ajaxSetup({
         error: function(jqXHR, exception) {
@@ -31,6 +54,8 @@ $(document).ready(function(){
 
     $(".signup").submit(function(){
         event.preventDefault();
+        $(".signup > input").attr('value','signing up...');
+        
         var email = $("#emailsignup").val();
         var password = $("#passwordsignup").val();
         if(validateEmail(email)){
@@ -38,10 +63,12 @@ $(document).ready(function(){
                 $.ajax({
                     type: "POST",
                     url: "/users",
-                    data: {
+                    data: JSON.stringify({
                         'email':$("#emailsignup").val(),
                         'password':$("#passwordsignup").val()
-                    },
+                    }),
+                    contentType: "application/json; charset=utf-8",
+                    dataType:"json",
                     success:  function(data, status, xhr){
                         var token = xhr.getResponseHeader('Authorization');
                         window.localStorage.setItem('token', token);
@@ -60,15 +87,27 @@ $(document).ready(function(){
 
     $(".login").submit(function(){
         event.preventDefault();
+        if(checked){
+            alert('checked');
+            $.cookie("test", 1);
+        }else{
+            alert('not checked');
+        }
+        
+        $(".login > input").attr('value','logging in...');
+        
         if(validateEmail($("#username").val())){
             if(validatePassword($("#password").val())){
                 $.ajax({
                     type: "POST",
                     url: "/users/login",
-                    data: {
+                    data: JSON.stringify({
                         'email':$("#username").val(),
-                        'password':$("#password").val()
-                    },
+                        'password':$("#password").val(),
+                        'keepMeLoggedIn':checked
+                    }),
+                    contentType: "application/json; charset=utf-8",
+                    dataType:"json",                    
                     success:  function(data, status, xhr){
                         var token = xhr.getResponseHeader('Authorization');
                         window.localStorage.setItem('token', token);
@@ -101,4 +140,5 @@ $(document).ready(function(){
         else
             return true;
     }
+    
 });

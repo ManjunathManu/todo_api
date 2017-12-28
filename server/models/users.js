@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 const validator = require('validator');
-const jwt = require('jsonwebtoken');
+const jwt = require('jsonwebtoken-refresh');
 const _ = require('lodash');
 const  bcrypt = require('bcryptjs');
 
@@ -21,18 +21,18 @@ var UserSchema = new mongoose.Schema({
     type:String,
     required:true,
     minlength:6
-  },
-  tokens:[{
-    access:{
-      type:String,
-      requires:true
-    },
+  }
+  // tokens:[{
+  //   access:{
+  //     type:String,
+  //     requires:true
+  //   },
     
-    token:{
-     type:String,
-      required: true
-    }
-   }],
+  //   token:{
+  //    type:String,
+  //     required: true
+  //   }
+  //  }],
    
 },{usePushEach : true});
 
@@ -47,8 +47,8 @@ UserSchema.methods.toJSON = function () {
 UserSchema.methods.generateAuthToken = function () {
   var user = this;
   var access = 'auth';
-  var token = jwt.sign({_id: user._id.toHexString(), access}, process.env.JWT_SECRET).toString();
-  user.tokens.push({access, token});
+  var token = jwt.sign({_id: user._id.toHexString(), access}, process.env.JWT_SECRET,{expiresIn:10}).toString();
+  //user.tokens.push({access, token});
   //user.tokens = user.tokens.concat([{access, token}]);
 
   return user.save().then(() => {
@@ -56,27 +56,60 @@ UserSchema.methods.generateAuthToken = function () {
   });
 };
 
-UserSchema.methods.deleteToken = function(token){
-  var user = this;
+// UserSchema.methods.deleteToken = function(token){
+//   var user = this;
 
-  return user.update({$pull:{tokens:{token} } });
-}
+//   return user.update({$pull:{tokens:{token} } });
+// }
 
-UserSchema.statics.findByToken = function (token){
+UserSchema.statics.findByToken = function (token,success,error){
+  var foundUser = null;
+  var refreshedToken = null;
   var User = this;
   var decoded;
   try{
-      decoded = jwt.verify(token, process.env.JWT_SECRET);  
-      
+        console.log('trying to decode token----',token)
+        console.log('----');
+        decoded = jwt.verify(token, process.env.JWT_SECRET);  
     }
-  catch(e){
-      return Promise.reject();
-  }
+    catch(e){
+      if(e.message == "jwt expired"){
+        console.log(e.message)
+        var oriDecoded = jwt.verify(token, process.env.JWT_SECRET, {'ignoreExpiration':true});
+         refreshedToken = jwt.refresh(oriDecoded, 120, process.env.JWT_SECRET);
+        decoded = jwt.verify(refreshedToken, process.env.JWT_SECRET);  
+        
+        console.log('refreshedToken',refreshedToken);
+        console.log('-------');
+      }else{
+        console.log('can not decode==',e.message);
+        return Promise.reject();
+      }   
+    }
+  
+    console.log('decoded id',decoded._id);
 
-  return User.findOne({
+  User.findOne({
     '_id':decoded._id,
-    'tokens.token':token,//enclose in quotes if . is used in query
-    'tokens.access':'auth'
+    // 'tokens.token':token,//enclose in quotes if . is used in query
+    // 'tokens.access':'auth'
+  },function(err, user){
+    if(err){
+      error(err);
+    }else{
+      foundUser = user;
+      // console.log('user==',user);
+      if(refreshedToken){
+      console.log("ref token is there")
+      foundUser.refreshedToken = refreshedToken;
+      // console.log('foundUser==',foundUser);
+      success(foundUser)
+      }else{
+        console.log("ref token is not there");
+        success(user);
+      }
+  
+    }
   });
 };
 

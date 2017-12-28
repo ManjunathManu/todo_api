@@ -19,10 +19,12 @@ const formidable = require('express-formidable');
 var app = express();
 const port = process.env.PORT;
 
-app.use(express.json())
-app.use(bodyParser.urlencoded({ extended: true })); // support encoded bodies
+//app.use(express.json())
+app.use(bodyParser.json())
+
+// app.use(bodyParser.urlencoded({ extended: false })); // support encoded bodies
 app.use(express.static(publicPath));
-//app.use(formidable());
+// app.use(formidable());
 // app.use(formidable({
 //   encoding: 'utf-8',
 //   uploadDir: '/my/dir',
@@ -84,15 +86,12 @@ app.post('/todos/findId', authenticate, (req, res)=>{
 
 app.delete('/todos/:id',authenticate, (req, res) => {
   var id = req.params.id;
-  console.log(id);
   if (!ObjectID.isValid(id)) {
-    console.log('invalid id')
     return res.status(404).send();
   }
 
   Todo.findOneAndRemove({_id:id, _creator:req.user._id}).then((todo) => {
     if (!todo) {
-      console.log('no todo')
       return res.status(404).send();
     }
 
@@ -131,30 +130,22 @@ app.patch('/todos/:id', authenticate, (req, res) => {
 
 // POST /users
 app.post('/users', (req, res) => {
-  // console.log(req.body);
   var body = _.pick(req.body, ['email', 'password']);
-  //  console.log(body);
   var user = new User(body);
 
   user.save().then(() => {
     return user.generateAuthToken();
   }).then((token) => {
-    // res.header('x-auth', token).send(user);
-    // console.log("1111111111111111111111111111111");
     res.header('Authorization',`Bearer ${token}`).send(user);
-    // res.header('Authorization:Bearer', token).send(user);
-    
-    
-  }).catch((e) => {
-    console.log("fsafhafga", e)
+}).catch((e) => {
     res.status(400).send(e.message);
   })
 });
 
 app.post('/users/login',(req, res)=>{
-  var body = _.pick(req.body, ['email', 'password']);
+  var body = _.pick(req.body, ['email', 'password','keepMeLoggedIn']);
   //res.send(body);
-  // console.log(body);
+  //console.log(body.keepMeLoggedIn);
   User.findByCredentials(body.email, body.password).then((user)=>{
     return user.generateAuthToken().then((token)=>{
       // res.header('x-auth',token).send(user);
@@ -171,12 +162,13 @@ app.get('/users/me',authenticate, (req, res)=>{
     res.send(req.user);
 });
 
-app.delete('/users/me/token', authenticate, (req, res)=>{
-  req.user.deleteToken(req.token).then(()=>{
-    res.status(200).send();
-  },()=>{
-    res.status(401).send();
-  })
+app.get('/users/logout', authenticate, (req, res)=>{
+  // req.user.deleteToken(req.token).then(()=>{
+  //   res.status(200).send();
+  // },()=>{
+  //   res.status(401).send();
+  // })
+    res.send(req.user);
 });
 
 app.get('/users',(req, res)=>{
