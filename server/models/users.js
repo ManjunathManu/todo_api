@@ -47,7 +47,7 @@ UserSchema.methods.toJSON = function () {
 UserSchema.methods.generateAuthToken = function () {
   var user = this;
   var access = 'auth';
-  var token = jwt.sign({_id: user._id.toHexString(), access}, process.env.JWT_SECRET,{expiresIn:10}).toString();
+  var token = jwt.sign({_id: user._id.toHexString(), access}, process.env.JWT_SECRET,{expiresIn:'1h'}).toString();
   //user.tokens.push({access, token});
   //user.tokens = user.tokens.concat([{access, token}]);
 
@@ -68,26 +68,26 @@ UserSchema.statics.findByToken = function (token,success,error){
   var User = this;
   var decoded;
   try{
-        console.log('trying to decode token----',token)
-        console.log('----');
+        // console.log('trying to decode token----',token)
+        // console.log('----');
         decoded = jwt.verify(token, process.env.JWT_SECRET);  
     }
     catch(e){
       if(e.message == "jwt expired"){
-        console.log(e.message)
+        // console.log(e.message)
         var oriDecoded = jwt.verify(token, process.env.JWT_SECRET, {'ignoreExpiration':true});
          refreshedToken = jwt.refresh(oriDecoded, 120, process.env.JWT_SECRET);
         decoded = jwt.verify(refreshedToken, process.env.JWT_SECRET);  
         
-        console.log('refreshedToken',refreshedToken);
-        console.log('-------');
+        // console.log('refreshedToken',refreshedToken);
+        // console.log('-------');
       }else{
-        console.log('can not decode==',e.message);
+        //console.log('can not decode==',e.message);
         return Promise.reject();
       }   
     }
   
-    console.log('decoded id',decoded._id);
+    // console.log('decoded id',decoded._id);
 
   User.findOne({
     '_id':decoded._id,
@@ -100,12 +100,12 @@ UserSchema.statics.findByToken = function (token,success,error){
       foundUser = user;
       // console.log('user==',user);
       if(refreshedToken){
-      console.log("ref token is there")
+      //console.log("ref token is there")
       foundUser.refreshedToken = refreshedToken;
       // console.log('foundUser==',foundUser);
       success(foundUser)
       }else{
-        console.log("ref token is not there");
+        //console.log("ref token is not there");
         success(user);
       }
   

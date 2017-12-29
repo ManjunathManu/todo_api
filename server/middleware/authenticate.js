@@ -20,13 +20,15 @@ var authenticate = (req, res, next)=> {
     // }).catch((e)=>{
     //   res.status(401).send();
     // })
+    // console.log(res)
+    // console.log(Object.keys(res));
+    //console.log(res.socket.req)
     User.findByToken(token,(user)=>{
-        // console.log('user in auth==', user);
         if(user.refreshedToken){
             req.token = user.refreshedToken;
             delete user.refreshedToken;
             req.user = user;  
-            console.log(user);
+            //console.log(user);
             next();
         }else{
             req.user = user;

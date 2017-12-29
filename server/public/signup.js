@@ -1,3 +1,7 @@
+if(window.localStorage.getItem('token') && $.cookie('test')){
+    window.location.href="todoslist.html";
+}
+
 $(document).ready(function(){
 
     //  history.pushState({ page: 1 }, "Title 1", "#no-back");
@@ -14,6 +18,8 @@ $(document).ready(function(){
     //         window.location.href="index.html"
     //     } 
     // })
+   
+
     window.history.pushState('', null,'./');
     $(window).on('popstate',function(){
         location.reload(true);
@@ -88,10 +94,10 @@ $(document).ready(function(){
     $(".login").submit(function(){
         event.preventDefault();
         if(checked){
-            alert('checked');
+            //alert('checked');
             $.cookie("test", 1);
         }else{
-            alert('not checked');
+            //alert('not checked');
         }
         
         $(".login > input").attr('value','logging in...');

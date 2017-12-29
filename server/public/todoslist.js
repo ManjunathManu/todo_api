@@ -1,17 +1,14 @@
 $(document).ready(function(){
-    // $(window).on('unload',function(){
+   var loggedOut;
+    $(window).on('beforeunload',function(){
+            console.log($.cookie("test"));
+            if(!($.cookie('test')) && !loggedOut){
+               // alert('no keep me');
+                $('#logoutBtn').click();
 
-    //     if(localStorage.getItem('token')){
-    //         alert('Not logged out');
-    //         window.location.href="todoslist.html"
-    //         // return "want to logout"
-    //     }else{
-    //         alert('logged out');
-    //         window.location.href="signup.html"
-    //         // return "logout"
-            
-    //     } 
-    // });
+            }
+    });
+    
     window.history.pushState('', null,'./');
     $(window).on('popstate',function(){
         location.reload(true);
@@ -40,20 +37,12 @@ $(document).ready(function(){
             }
         }
     });
-    
-    // if (window.history && window.history.pushState) {
-        
-    //         window.history.pushState('forward', null, './#forward');
-        
-    //         $(window).on('popstate', function() {
-    //           alert('This will logs you out');
-    //           $("#logoutBtn").click();
-    //         });
-    //     }
         
     var ul = jQuery('<ul></ul>').addClass("todosList");
+
      $("#logoutBtn").on('click',function(){
         var token = window.localStorage.getItem('token');
+        loggedOut=true;
          $.ajax({
              type:"GET",
              url:"/users/logout",
@@ -61,6 +50,7 @@ $(document).ready(function(){
              success: function(data) {
              window.localStorage.clear();
              window.location.assign("index.html");
+             $.removeCookie("test");
             }
          });
          $.removeCookie("test");
@@ -128,22 +118,34 @@ $(document).ready(function(){
 
     $(document).on("click", ".edit", function(event){
         event.stopPropagation();
+        var enterPressed;
+        var onfocus;
        var orValue=$(this).parent().clone().children()[0].innerText;
         $(this).parent().children()[0].innerText='';
         $(this).parent().append(jQuery('<input autofocus></input>').addClass('input').val(orValue));
 
         $('.input').on('click', function(e) {
-            e.stopPropagation();            
+            e.stopPropagation();   
+            enterPressed = false;         
         })
         
         $('.input').on('focus',function(e){
             e.stopPropagation();
+            console.log("focus");
+             enterPressed = false;
+             //onfocus=true;
+            console.log(enterPressed);
+
             $(this).keypress(function(event){
                 event.stopPropagation();
                 var keycode = (event.keyCode ? event.keyCode : event.which);
                 var newText = $(this).val();
-                
+                //enterPressed = true;
                 if(keycode == '13'){
+                    enterPressed = true;
+                    console.log("enter")
+                    
+                    console.log(enterPressed)
                     event.stopPropagation();
                     $(this).hide();
                     $(this).parent().children()[0].innerText = newText;
@@ -155,24 +157,30 @@ $(document).ready(function(){
                         alert(e);
                     })
                 }
-
-                $(this).focusout(function(e){
-                e.stopPropagation();
-                var newText = $(this).val();
-                $(this).hide();
-                $(this).parent().children()[0].innerText = newText;
-                findId(orValue)
-                .done(function(id){
-                    editTodo(newText, false, id);
-                })
-                .fail(function(e){
-                    alert(e);
-                })
-        })
-            })
-
-        })
-   });
+            }).promise().done(function(){
+    
+                    $(this).on('focusout',function(e){
+                        if(!enterPressed){
+                            e.stopPropagation();
+                            console.log("focusout")
+                            console.log(enterPressed);                    
+                            var newText = $(this).val();
+                            $(this).hide();
+                            $(this).parent().children()[0].innerText = newText;
+                            //console.log(enterPressed)
+                            findId(orValue)
+                            .done(function(id){
+                                editTodo(newText, false, id);
+                            })
+                            .fail(function(e){
+                                alert(e);
+                            })
+                        }
+                    });
+                
+            });
+        });
+    });
 
     $(document).on('click', 'li', function(){
         $(this).toggleClass("checked");
