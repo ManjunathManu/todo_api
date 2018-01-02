@@ -157,14 +157,20 @@ $(document).ready(function(){
                     // console.log(enterPressed)
                     event.stopPropagation();
                     $(this).hide();
-                    $(this).parent().children()[0].innerText = newText;
-                    findId(orValue)
-                    .done(function(id){
-                        editTodo(newText, false, id);
-                    })
-                    .fail(function(e){
-                        alert(e);
-                    })
+                    if(newText.trim()){
+                        $(this).parent().children()[0].innerText = newText;
+                        findId(orValue)
+                        .done(function(id){
+                            editTodo(newText, false, id);
+                        })
+                        .fail(function(e){
+                            alert(e);
+                        })
+                    }else{
+                        alert("Title required:Cannot edit the todo");
+                        $(this).parent().children()[0].innerText = orValue;
+                    }
+                    
                 }
             }).promise().done(function(){
     
@@ -175,15 +181,22 @@ $(document).ready(function(){
                             // console.log(enterPressed);                    
                             var newText = $(this).val();
                             $(this).hide();
-                            $(this).parent().children()[0].innerText = newText;
-                            //console.log(enterPressed)
-                            findId(orValue)
-                            .done(function(id){
-                                editTodo(newText, false, id);
-                            })
-                            .fail(function(e){
-                                alert(e);
-                            })
+                            if(newText.trim()){
+                                $(this).parent().children()[0].innerText = newText;
+                                //console.log(enterPressed)
+                                findId(orValue)
+                                .done(function(id){
+                                    editTodo(newText, false, id);
+                                })
+                                .fail(function(e){
+                                    alert(e);
+                                })
+                            }else{
+                                alert("Title required:Cannot edit the todo");
+                                 $(this).parent().children()[0].innerText = orValue;
+                        
+                            }
+                            
                         }
                     });
                 
@@ -218,6 +231,10 @@ $(document).ready(function(){
     
 
     function findId(text){
+        if(!text.trim()){
+            alert("Cannot find id of empty todo");
+            return false;
+        }
        return  $.ajax({
             type:"POST",
             url:"/todos/findId",
@@ -228,6 +245,10 @@ $(document).ready(function(){
         };
 
     function editTodo(text, completed, id){
+        if(!text.trim()){
+            alert("Todo title required");
+            return false;
+        }
         return  $.ajax({
             type:"patch",
             url:"/todos/"+id,
