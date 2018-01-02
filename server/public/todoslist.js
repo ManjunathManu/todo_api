@@ -105,6 +105,9 @@ $(document).ready(function(){
                    jQuery("#myInput").val("")
                     ul.append(jQuery('<li></li>').append(jQuery('<span></span>').text(todo.text)).append(jQuery('<button>Edit</button>').addClass('edit')).append(jQuery('<span></span>').text('\u00D7').addClass('close')));
                     jQuery("#todos").html(ul);
+                    yetToComplete++;
+                jQuery(".badge.badge-danger").text(yetToComplete);
+                
                    }
             })
          }
