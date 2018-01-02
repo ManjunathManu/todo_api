@@ -1,7 +1,8 @@
 $(document).ready(function(){
+
    var loggedOut;
     $(window).on('beforeunload',function(){
-            console.log($.cookie("test"));
+            //console.log($.cookie("test"));
             if(!($.cookie('test')) && !loggedOut){
                // alert('no keep me');
                 $('#logoutBtn').click();
@@ -31,7 +32,7 @@ $(document).ready(function(){
             }else if(jqXHR.status == 401){
                 alert('Unauthorized user')
             } else if(jqXHR.status == 400){
-               alert('Bad request:User already exists');
+               alert('Bad request:Todos title required');
             }else {
                 alert('Uncaught Error.\n' + jqXHR.responseText);
             }
@@ -56,26 +57,34 @@ $(document).ready(function(){
          $.removeCookie("test");
      });
 
-     $.ajax({
-         type:"GET",
-         url:"/todos",
-         beforeSend:function(xhr){xhr.setRequestHeader('Authorization', window.localStorage.getItem('token'))},
-         success:function(todos){
-           todos.todos.forEach(function(todo){
-               if(todo.completed === true){
-                ul.append(jQuery('<li></li>').toggleClass('checked').append(jQuery('<span></span>').text(todo.text)).append(jQuery('<button>Edit</button>').addClass('edit')).append(jQuery('<span></span>').text('\u00D7').addClass('close'))); 
-            
-               }else{
-                ul.append(jQuery('<li></li>').append(jQuery('<span></span>').text(todo.text)).append(jQuery('<button>Edit</button>').addClass('edit')).append(jQuery('<span></span>').text('\u00D7').addClass('close'))); 
-            
-               }
-            })
-             jQuery("#todos").html(ul);
-            }
-     });
+    $.ajax({
+            type:"GET",
+            url:"/todos",
+            beforeSend:function(xhr){xhr.setRequestHeader('Authorization', window.localStorage.getItem('token'))},
+            success:function(todos){
+            todos.todos.forEach(function(todo){
+                if(todo.completed === true){
+                    ul.append(jQuery('<li></li>').toggleClass('checked').append(jQuery('<span></span>').text(todo.text)).append(jQuery('<button>Edit</button>').addClass('edit')).append(jQuery('<span></span>').text('\u00D7').addClass('close'))); 
+                
+                }else{
+                    ul.append(jQuery('<li></li>').append(jQuery('<span></span>').text(todo.text)).append(jQuery('<button>Edit</button>').addClass('edit')).append(jQuery('<span></span>').text('\u00D7').addClass('close'))); 
+                
+                }
+                })
+                jQuery("#todos").html(ul);
+                }
+    });
+    $("#myInput").keypress(function(e){
+        var key = e.which;
+        if(key == 13){
+        $(".addBtn").click();
+        e.preventDefault();
+        return false;
+        }
+    });
 
      $(".addBtn").on('click', function(){
-         if(jQuery("#myInput").val()===""){
+         if(jQuery("#myInput").val()==="" || !(jQuery("#myInput").val()).trim()){
              alert('Title required!!');
          }else{
             $.ajax({
@@ -107,12 +116,12 @@ $(document).ready(function(){
                 url:"/todos/"+id,
                 beforeSend:function(xhr){xhr.setRequestHeader('Authorization', window.localStorage.getItem('token'))},
                 success:function(todo){
-                    console.log(todo);
+                    // console.log(todo);
                 }
             })
         })
         .catch(function(e){
-            console.log(e);
+            // console.log(e);
         })
     });
 
@@ -131,10 +140,10 @@ $(document).ready(function(){
         
         $('.input').on('focus',function(e){
             e.stopPropagation();
-            console.log("focus");
+            // console.log("focus");
              enterPressed = false;
              //onfocus=true;
-            console.log(enterPressed);
+            // console.log(enterPressed);
 
             $(this).keypress(function(event){
                 event.stopPropagation();
@@ -143,9 +152,9 @@ $(document).ready(function(){
                 //enterPressed = true;
                 if(keycode == '13'){
                     enterPressed = true;
-                    console.log("enter")
+                    // console.log("enter")
                     
-                    console.log(enterPressed)
+                    // console.log(enterPressed)
                     event.stopPropagation();
                     $(this).hide();
                     $(this).parent().children()[0].innerText = newText;
@@ -162,8 +171,8 @@ $(document).ready(function(){
                     $(this).on('focusout',function(e){
                         if(!enterPressed){
                             e.stopPropagation();
-                            console.log("focusout")
-                            console.log(enterPressed);                    
+                            // console.log("focusout")
+                            // console.log(enterPressed);                    
                             var newText = $(this).val();
                             $(this).hide();
                             $(this).parent().children()[0].innerText = newText;
@@ -192,7 +201,7 @@ $(document).ready(function(){
                 editTodo(text, true, id);
             })
             .fail(function(e){
-                console.log(e);
+                // console.log(e);
             })
             
         }else{
@@ -201,7 +210,7 @@ $(document).ready(function(){
                 editTodo(text, false, id);
             })
             .fail((e)=>{
-                console.log(e);
+                // console.log(e);
             })
         
         }
