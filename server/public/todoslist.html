@@ -3,13 +3,22 @@
     <head>
         <title>Todos</title>
         <link rel="stylesheet" type="text/css" href="todoslist.css">
+        <link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" /> 
+        <link href="https://fonts.googleapis.com/css?family=Raleway:100,100i,200,200i,300,300i,400,400i,500,500i,600,600i,700,700i,800,800i,900,900i" rel="stylesheet"> 
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.3/css/bootstrap.min.css" integrity="sha384-Zug+QiDoJOrZ5t4lssLdxGhVrurbmBWopoEl+M6BdEfwnCJZtKxi1KgxUyJq13dy" crossorigin="anonymous">
     </head>
     <body>
         <div id="myDIV" class="header">
             <h2>My To Do List</h2>
             <input type="text" id="myInput" placeholder="Title...">
             <span class="addBtn">Add</span>
-          </div>
+            <button type="button" class="btn btn-primary">
+                Completed <span class="badge badge-success"></span>
+              </button>
+              <button type="button" class="btn btn-primary">
+                Yet to complete <span class="badge badge-danger"></span>
+              </button>
+        </div>
         <div id="todos">
             
         </div>  

@@ -1,6 +1,8 @@
 $(document).ready(function(){
 
    var loggedOut;
+   var completed=0;
+   var yetToComplete=0;
     $(window).on('beforeunload',function(){
             //console.log($.cookie("test"));
             if(!($.cookie('test')) && !loggedOut){
@@ -65,12 +67,16 @@ $(document).ready(function(){
             todos.todos.forEach(function(todo){
                 if(todo.completed === true){
                     ul.append(jQuery('<li></li>').toggleClass('checked').append(jQuery('<span></span>').text(todo.text)).append(jQuery('<button>Edit</button>').addClass('edit')).append(jQuery('<span></span>').text('\u00D7').addClass('close'))); 
-                
+                    completed++;
                 }else{
                     ul.append(jQuery('<li></li>').append(jQuery('<span></span>').text(todo.text)).append(jQuery('<button>Edit</button>').addClass('edit')).append(jQuery('<span></span>').text('\u00D7').addClass('close'))); 
+                    yetToComplete++;
                 
                 }
                 })
+                jQuery(".badge.badge-success").text(completed);
+                jQuery(".badge.badge-danger").text(yetToComplete);
+                
                 jQuery("#todos").html(ul);
                 }
     });
@@ -205,6 +211,7 @@ $(document).ready(function(){
     });
 
     $(document).on('click', 'li', function(){
+        //var completed=0;
         $(this).toggleClass("checked");
         var text = $(this).clone().children()[0].innerText;
         var status = $(this).attr('class');
@@ -212,6 +219,11 @@ $(document).ready(function(){
             findId(text)
             .done(function(id){
                 editTodo(text, true, id);
+                completed++;
+                yetToComplete--;
+                jQuery(".badge.badge-success").text(completed);
+                jQuery(".badge.badge-danger").text(yetToComplete);
+                
             })
             .fail(function(e){
                 // console.log(e);
@@ -221,6 +233,11 @@ $(document).ready(function(){
             findId(text)
             .done(function(id){
                 editTodo(text, false, id);
+                yetToComplete++;
+                completed--;
+                jQuery(".badge.badge-danger").text(yetToComplete);
+                jQuery(".badge.badge-success").text(completed);
+                
             })
             .fail((e)=>{
                 // console.log(e);
