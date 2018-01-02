@@ -4,10 +4,10 @@
 }
 
 /* Remove margins and padding from the list */
-ul {
+/* ul {
     margin: 0;
     padding: 0;
-}
+} */
 
 /* Style the list items */
 ul li {
@@ -26,9 +26,9 @@ ul li {
 }
 
 /* Set all odd list items to a different color (zebra-stripes) */
-ul li:nth-child(odd) {
+/* ul li:nth-child(odd) {
     background: #f9f9f9;
-}
+} */
 
 /* Darker background-color on hover */
 ul li:hover {
@@ -37,8 +37,8 @@ ul li:hover {
 
 /* When clicked on, add a background color and strike out text */
 ul li.checked {
-    background: #888;
-    color: #fff;
+    /* background: #888; */
+    /* color: #fff; */
     text-decoration: line-through;
 }
 
@@ -133,3 +133,26 @@ input {
        width:10%;
        height:5%;
     }
+/*bootstrap  */
+
+.btn.btn-outline-primary{
+    position: absolute;
+    right:20px;
+    top:5px;
+    align-content:  right;
+}
+
+.btn.btn-outline-danger.btn-sm{
+    position: absolute;
+    right:20px;
+    top:5px;
+    align-content:  right;
+}
+.btn.btn-outline-success.btn-sm{
+    position: absolute;
+    right:50px;
+    top:5px;
+    align-content:  right;
+}
+/* other*/
+/* CSS REQUIRED */

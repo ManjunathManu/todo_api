@@ -43,9 +43,11 @@ $(document).ready(function(){
         
     var ul = jQuery('<ul></ul>').addClass("todosList");
 
-     $("#logoutBtn").on('click',function(){
+     $(".btn.btn-outline-primary").on('click',function(){
         var token = window.localStorage.getItem('token');
         loggedOut=true;
+        jQuery(".btn.btn-outline-primary").text("Logging out");
+        jQuery(".btn.btn-outline-primary").attr("disabled","disabled");
          $.ajax({
              type:"GET",
              url:"/users/logout",
@@ -66,47 +68,62 @@ $(document).ready(function(){
             success:function(todos){
             todos.todos.forEach(function(todo){
                 if(todo.completed === true){
-                    ul.append(jQuery('<li></li>').toggleClass('checked').append(jQuery('<span></span>').text(todo.text)).append(jQuery('<button>Edit</button>').addClass('edit')).append(jQuery('<span></span>').text('\u00D7').addClass('close'))); 
+                    jQuery(".list-group")
+                    .append(jQuery('<li class="list-group-item list-group-item-success">')
+                    .append(jQuery('<span ></span>').text(todo.text))
+                    .prepend(jQuery('<i class="fa fa-check-square-o" aria-hidden="true"></i>'))                    
+                    .append(jQuery('<button type="button" class="btn btn-outline-danger btn-sm">').append(' <i class="fa fa-trash" aria-hidden="true"></i>'))
+                    .append(jQuery('<button type="button" class="btn btn-outline-success btn-sm">').append(' <i class="fa fa-pencil" aria-hidden="true"></i>')));
+                    
                     completed++;
                 }else{
-                    ul.append(jQuery('<li></li>').append(jQuery('<span></span>').text(todo.text)).append(jQuery('<button>Edit</button>').addClass('edit')).append(jQuery('<span></span>').text('\u00D7').addClass('close'))); 
+                    jQuery(".list-group")
+                    .append(jQuery('<li class="list-group-item list-group-item-warning">')
+                    .append(jQuery('<span ></span>').text(todo.text))                    
+                    .append(jQuery('<button type="button" class="btn btn-outline-danger btn-sm">').append(' <i class="fa fa-trash" aria-hidden="true"></i>'))
+                    .append(jQuery('<button type="button" class="btn btn-outline-success btn-sm">').append(' <i class="fa fa-pencil" aria-hidden="true"></i>')));
                     yetToComplete++;
                 
                 }
                 })
-                jQuery(".badge.badge-success").text(completed);
+                jQuery(".badge.badge-light").text(completed);
                 jQuery(".badge.badge-danger").text(yetToComplete);
                 
                 jQuery("#todos").html(ul);
                 }
     });
-    $("#myInput").keypress(function(e){
+
+
+    $(".form-control.mr-sm-2").keypress(function(e){
         var key = e.which;
         if(key == 13){
-        $(".addBtn").click();
+            $(".form-inline").submit();
         e.preventDefault();
         return false;
         }
     });
 
-     $(".addBtn").on('click', function(){
-         if(jQuery("#myInput").val()==="" || !(jQuery("#myInput").val()).trim()){
+
+     $(".form-inline").on('submit', function(e){
+         e.preventDefault();
+         if(jQuery(".form-control.mr-sm-2").val()==="" || !(jQuery(".form-control.mr-sm-2").val()).trim()){
              alert('Title required!!');
          }else{
             $.ajax({
                 type:"POST",
-                data:JSON.stringify({text:jQuery("#myInput").val()}),
+                data:JSON.stringify({text:jQuery(".form-control.mr-sm-2").val()}),
                 contentType: "application/json; charset=utf-8",
                 dataType:"json",             
                 url:"/todos",
                 beforeSend:function(xhr){xhr.setRequestHeader('Authorization', window.localStorage.getItem('token'))},
                 success:function(todo){
-                    //console.log(todo);
-                   jQuery("#myInput").val("")
-                    ul.append(jQuery('<li></li>').append(jQuery('<span></span>').text(todo.text)).append(jQuery('<button>Edit</button>').addClass('edit')).append(jQuery('<span></span>').text('\u00D7').addClass('close')));
-                    jQuery("#todos").html(ul);
+                   jQuery(".form-control.mr-sm-2").val("")
+                    jQuery(".list-group").append(jQuery('<li class="list-group-item list-group-item-warning">')
+                    .append(jQuery('<span></span>').text(todo.text))                                       
+                    .append(jQuery('<button type="button" class="btn btn-outline-danger btn-sm">').append(' <i class="fa fa-trash" aria-hidden="true"></i>'))
+                    .append(jQuery('<button type="button" class="btn btn-outline-success btn-sm">').append(' <i class="fa fa-pencil" aria-hidden="true"></i>')));
                     yetToComplete++;
-                jQuery(".badge.badge-danger").text(yetToComplete);
+                    jQuery(".badge.badge-danger").text(yetToComplete);
                 
                    }
             })
@@ -114,9 +131,15 @@ $(document).ready(function(){
         
      });
 
-     $(document).on("click", ".close", function(event){
+     $(document).on("click", ".btn.btn-outline-danger.btn-sm", function(event){
          event.stopPropagation();
-        var text=$(this).parent().clone().children()[0].innerText;
+        var text
+        $(this).parent().children().each(function(child){
+            if(this.tagName === "SPAN"){
+            text = this.innerText;
+            return false;
+            }
+           })
         $(this).parent().hide();
         findId(text)
         .done(function(id){
@@ -134,12 +157,24 @@ $(document).ready(function(){
         })
     });
 
-    $(document).on("click", ".edit", function(event){
+    $(document).on("click", ".btn.btn-outline-success.btn-sm", function(event){
         event.stopPropagation();
         var enterPressed;
         var onfocus;
-       var orValue=$(this).parent().clone().children()[0].innerText;
-        $(this).parent().children()[0].innerText='';
+        var orValue;
+        $(this).parent().children().each(function(child){
+            if(this.tagName === "SPAN"){
+            orValue = this.innerText;
+            return false;
+            }
+           });
+           $(this).parent().children().each(function(child){
+            if(this.tagName === "SPAN"){
+             this.innerText="";
+            return false;
+            }
+           })
+       //$(this).parent().children()[0].innerText='';
         $(this).parent().append(jQuery('<input autofocus></input>').addClass('input').val(orValue));
 
         $('.input').on('click', function(e) {
@@ -191,7 +226,13 @@ $(document).ready(function(){
                             var newText = $(this).val();
                             $(this).hide();
                             if(newText.trim()){
-                                $(this).parent().children()[0].innerText = newText;
+                                //$(this).parent().children()[0].innerText = newText;
+                                $(this).clone().children().each(function(child){
+                                    if(this.tagName === "SPAN"){
+                                    this.innerText=newText;
+                                    return false;
+                                    }
+                                   })
                                 //console.log(enterPressed)
                                 findId(orValue)
                                 .done(function(id){
@@ -202,6 +243,12 @@ $(document).ready(function(){
                                 })
                             }else{
                                 alert("Title required:Cannot edit the todo");
+                                $(this).clone().children().each(function(child){
+                                    if(this.tagName === "SPAN"){
+                                     this.innerText= orValue;
+                                    return false;
+                                    }
+                                   })
                                  $(this).parent().children()[0].innerText = orValue;
                         
                             }
@@ -215,16 +262,24 @@ $(document).ready(function(){
 
     $(document).on('click', 'li', function(){
         //var completed=0;
-        $(this).toggleClass("checked");
-        var text = $(this).clone().children()[0].innerText;
-        var status = $(this).attr('class');
-        if(status === 'checked'){
+        var text = null;
+        var status = $(this).attr('class');        
+        // var text = $(this).clone().children()[0].innerText;
+       $(this).clone().children().each(function(child){
+        if(this.tagName === "SPAN"){
+        text = this.innerText;
+        return false;
+        }
+       })
+        if(status === 'list-group-item list-group-item-warning'){
+            $(this).attr("class","list-group-item list-group-item-success");  
+            $(this).prepend(jQuery('<i class="fa fa-check-square-o" aria-hidden="true"></i>'))
             findId(text)
             .done(function(id){
                 editTodo(text, true, id);
                 completed++;
                 yetToComplete--;
-                jQuery(".badge.badge-success").text(completed);
+                jQuery(".badge.badge-light").text(completed);
                 jQuery(".badge.badge-danger").text(yetToComplete);
                 
             })
@@ -233,13 +288,15 @@ $(document).ready(function(){
             })
             
         }else{
+            $(this).attr("class","list-group-item list-group-item-warning");
+            $(this).children()[0].style.display = "none";
             findId(text)
             .done(function(id){
                 editTodo(text, false, id);
                 yetToComplete++;
                 completed--;
                 jQuery(".badge.badge-danger").text(yetToComplete);
-                jQuery(".badge.badge-success").text(completed);
+                jQuery(".badge.badge-light").text(completed);
                 
             })
             .fail((e)=>{

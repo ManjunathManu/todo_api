@@ -8,7 +8,7 @@
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.3/css/bootstrap.min.css" integrity="sha384-Zug+QiDoJOrZ5t4lssLdxGhVrurbmBWopoEl+M6BdEfwnCJZtKxi1KgxUyJq13dy" crossorigin="anonymous">
     </head>
     <body>
-        <div id="myDIV" class="header">
+        <!-- <div id="myDIV" class="header">
             <h2>My To Do List</h2>
             <input type="text" id="myInput" placeholder="Title...">
             <span class="addBtn">Add</span>
@@ -23,12 +23,34 @@
             
         </div>  
 
-        <button id="logoutBtn" type="click" >Logout</button>
+        <button id="logoutBtn" type="click" >Logout</button> -->
+        <div class="container-fluid">
+            <nav class="navbar navbar-light bg-light">
+                <form class="form-inline">
+                    <input class="form-control mr-sm-2"  placeholder="Title..." aria-label="Add">
+                    <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Add</button>
+                    <button type="button" class="btn btn-outline-primary">Logout</button>
+                </form>
+            </nav>
+            <button type="button" class="btn btn-success">
+                Completed <span class="badge badge-light"></span>
+              </button>
+              <button type="button" class="btn btn-warning">
+                Yet to complete <span class="badge badge-danger"></span>
+              </button>
+
+            <ul class="list-group">
+         
+            </ul>
+    
+        </div>
 
         <script src="libs/jquery-3.2.1.min.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.1/jquery.cookie.min.js"></script>
-        
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.3/js/bootstrap.min.js" integrity="sha384-a5N7Y/aK3qNeh15eJKGWxsqtnX/wWdSZSKp+81YjTmS15nvnvxKHuzaWwXHDli+4" crossorigin="anonymous"></script>
         <!-- <script data-main="scripts/main.js" src="libs/require.js"></script> -->
         <script src="todoslist.js"></script>
+        <script src="list.js"></script>
     </body>
 </html>
