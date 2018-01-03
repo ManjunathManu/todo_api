@@ -25,7 +25,7 @@ $(document).ready(function(){
         location.reload(true);
     });
     var checked=false;
-    $('#loginkeeping').on('click',function() {
+    $('#exampleCheck1').on('click',function() {
         if(this.checked){
              checked = true;
         } else{
@@ -58,20 +58,20 @@ $(document).ready(function(){
         }
     });
 
-    $(".signup").submit(function(){
+    $("#signup_form").submit(function(event){
         event.preventDefault();
-        $(".signup > input").attr('value','signing up...');
-        
-        var email = $("#emailsignup").val();
-        var password = $("#passwordsignup").val();
+        // $(".signup > input").attr('value','signing up...');
+        jQuery("#signUpBtn").text("signing up").attr("disabled","disabled");
+        var email = $("#exampleInputEmail2").val();
+        var password = $("#exampleInputPassword2").val();
         if(validateEmail(email)){
             if(validatePassword(password)){
                 $.ajax({
                     type: "POST",
                     url: "/users",
                     data: JSON.stringify({
-                        'email':$("#emailsignup").val(),
-                        'password':$("#passwordsignup").val()
+                        'email':$("#exampleInputEmail2").val(),
+                        'password':$("#exampleInputPassword2").val()
                     }),
                     contentType: "application/json; charset=utf-8",
                     dataType:"json",
@@ -91,7 +91,7 @@ $(document).ready(function(){
        
           });
 
-    $(".login").submit(function(){
+    $("#login_form").submit(function(event){
         event.preventDefault();
         if(checked){
             //alert('checked');
@@ -100,16 +100,16 @@ $(document).ready(function(){
             //alert('not checked');
         }
         
-        $(".login > input").attr('value','logging in...');
-        
-        if(validateEmail($("#username").val())){
-            if(validatePassword($("#password").val())){
+        // $(".login > input").attr('value','logging in...');
+        jQuery("#signInBtn").text("Logging in").attr("disabled","disabled")
+        if(validateEmail($("#exampleInputEmail1").val())){
+            if(validatePassword($("#exampleInputPassword1").val())){
                 $.ajax({
                     type: "POST",
                     url: "/users/login",
                     data: JSON.stringify({
-                        'email':$("#username").val(),
-                        'password':$("#password").val(),
+                        'email':$("#exampleInputEmail1").val(),
+                        'password':$("#exampleInputPassword1").val(),
                         'keepMeLoggedIn':checked
                     }),
                     contentType: "application/json; charset=utf-8",

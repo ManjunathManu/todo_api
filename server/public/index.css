@@ -1,0 +1,38 @@
+body{
+	background-image: url(step01.gif)
+}
+
+h1{
+	color: rgb(221, 208, 245);
+}
+#login, #signup{
+	/* position: absolute; */
+	/* align-content:center; */
+    /* width: 50%; */
+    /* padding: 18px 6% 60px 6%; */
+    /* margin: 0 35px; */
+    background: rgb(213, 234, 237);
+    /* border: 1px solid rgba(147, 184, 189,0.8); */
+    -webkit-box-shadow: 0pt 2px 5px rgba(105, 108, 109, 0.7), 0px 0px 8px 5px rgba(208, 223, 226, 0.4) inset;
+    -moz-box-shadow: 0pt 2px 5px rgba(105, 108, 109, 0.7),	0px 0px 8px 5px rgba(208, 223, 226, 0.4) inset;
+    box-shadow: 0pt 2px 5px rgba(105, 108, 109, 0.7), 0px 0px 8px 5px rgba(208, 223, 226, 0.4) inset;
+    -webkit-box-shadow: 5px;
+    -moz-border-radius: 5px;
+	border-radius: 5px;
+	margin: auto;
+	margin-top: 10%;
+	width: 50%;
+    padding: 18px 6% 60px 6%;
+}
+#login h2{
+	text-align: center;
+	font-size: 50;
+	color: rgb(85, 153, 242);
+	font-family: bold;
+}
+#signup h2{
+	text-align: center;
+	font-size: 50;
+	color: rgb(85, 153, 242);
+	font-family: bold;
+}

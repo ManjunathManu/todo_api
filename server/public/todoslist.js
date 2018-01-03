@@ -133,7 +133,7 @@ $(document).ready(function(){
 
      $(document).on("click", ".btn.btn-outline-danger.btn-sm", function(event){
          event.stopPropagation();
-        var text
+        //var text = getText(this);
         $(this).parent().children().each(function(child){
             if(this.tagName === "SPAN"){
             text = this.innerText;
@@ -282,7 +282,7 @@ $(document).ready(function(){
         var text = null;
         var status = $(this).attr('class');        
         // var text = $(this).clone().children()[0].innerText;
-       $(this).clone().children().each(function(child){
+       $(this).children().each(function(child){
         if(this.tagName === "SPAN"){
         text = this.innerText;
         return false;
@@ -352,5 +352,24 @@ $(document).ready(function(){
             beforeSend:function(xhr){xhr.setRequestHeader('Authorization', window.localStorage.getItem('token'))}
         })
     }
+
+    // function getText(child){
+    //     $(child).parent().children().each(function(child){
+    //         if(this.tagName === "SPAN"){
+    //         text= this.innerText;
+    //         return text;
+    //         return false;
+    //         }
+    //     })
+    // }
+
+    // function setText(child, text){
+    //     $(child).parent().children().each(function(child){
+    //         if(this.tagName === "SPAN"){
+    //             this.innerText = text;
+    //             return false;
+    //         }
+    //     })
+    // }
     
  });
