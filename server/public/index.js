@@ -61,7 +61,6 @@ $(document).ready(function(){
     $("#signup_form").submit(function(event){
         event.preventDefault();
         // $(".signup > input").attr('value','signing up...');
-        jQuery("#signUpBtn").text("signing up").attr("disabled","disabled");
         var email = $("#exampleInputEmail2").val();
         var password = $("#exampleInputPassword2").val();
         if(validateEmail(email)){
@@ -76,6 +75,7 @@ $(document).ready(function(){
                     contentType: "application/json; charset=utf-8",
                     dataType:"json",
                     success:  function(data, status, xhr){
+                        jQuery("#signUpBtn").text("Signing up").attr("disabled","disabled");                        
                         var token = xhr.getResponseHeader('Authorization');
                         window.localStorage.setItem('token', token);
                         window.location.href = "todoslist.html";
@@ -101,7 +101,6 @@ $(document).ready(function(){
         }
         
         // $(".login > input").attr('value','logging in...');
-        jQuery("#signInBtn").text("Logging in").attr("disabled","disabled")
         if(validateEmail($("#exampleInputEmail1").val())){
             if(validatePassword($("#exampleInputPassword1").val())){
                 $.ajax({
@@ -115,6 +114,7 @@ $(document).ready(function(){
                     contentType: "application/json; charset=utf-8",
                     dataType:"json",                    
                     success:  function(data, status, xhr){
+                        jQuery("#signInBtn").text("Logging in").attr("disabled","disabled");
                         var token = xhr.getResponseHeader('Authorization');
                         window.localStorage.setItem('token', token);
                         window.location.href = "todoslist.html";

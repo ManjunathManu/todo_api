@@ -68,7 +68,7 @@ $(document).ready(function(){
             success:function(todos){
             todos.todos.forEach(function(todo){
                 if(todo.completed === true){
-                    jQuery(".list-group")
+                    jQuery("#todoList")
                     .append(jQuery('<li class="list-group-item list-group-item-success">')
                     .append(jQuery('<span ></span>').text(todo.text))
                     .prepend(jQuery('<i class="fa fa-check-square-o" aria-hidden="true"></i>'))                    
@@ -77,7 +77,7 @@ $(document).ready(function(){
                     
                     completed++;
                 }else{
-                    jQuery(".list-group")
+                    jQuery("#todoList")
                     .append(jQuery('<li class="list-group-item list-group-item-warning">')
                     .append(jQuery('<span ></span>').text(todo.text))                    
                     .append(jQuery('<button type="button" class="btn btn-outline-danger btn-sm">').append(' <i class="fa fa-trash" aria-hidden="true"></i>'))
@@ -118,7 +118,7 @@ $(document).ready(function(){
                 beforeSend:function(xhr){xhr.setRequestHeader('Authorization', window.localStorage.getItem('token'))},
                 success:function(todo){
                    jQuery(".form-control.mr-sm-2").val("")
-                    jQuery(".list-group").append(jQuery('<li class="list-group-item list-group-item-warning">')
+                    jQuery("#todoList").append(jQuery('<li class="list-group-item list-group-item-warning">')
                     .append(jQuery('<span></span>').text(todo.text))                                       
                     .append(jQuery('<button type="button" class="btn btn-outline-danger btn-sm">').append(' <i class="fa fa-trash" aria-hidden="true"></i>'))
                     .append(jQuery('<button type="button" class="btn btn-outline-success btn-sm">').append(' <i class="fa fa-pencil" aria-hidden="true"></i>')));
@@ -323,6 +323,55 @@ $(document).ready(function(){
         }
     });
     
+    $(document).on('click','#searchBtn', function(event){
+        event.preventDefault();
+        event.stopPropagation();
+        $("#searchList").empty();
+        var text = (jQuery(".form-control.mr-sm-2").val()).trim();
+        if(text==="" || !text.trim()){
+            alert('Title required!!');
+        }else{
+            $.ajax({
+                type:"POST",
+                data:JSON.stringify({text:text}),
+                contentType: "application/json; charset=utf-8",
+                dataType:"json",             
+                url:"/todos/search",
+                beforeSend:function(xhr){xhr.setRequestHeader('Authorization', window.localStorage.getItem('token'))},
+                success:function(todos){
+                jQuery(".form-control.mr-sm-2").val("")
+                jQuery("#todoList").css({"display":"none"});    
+                
+                todos.forEach(function(todo){
+                if(todo.completed === true){
+                    jQuery("#searchList")
+                    .append(jQuery('<li class="list-group-item list-group-item-success">')
+                    .append(jQuery('<span ></span>').text(todo.text))
+                    .prepend(jQuery('<i class="fa fa-check-square-o" aria-hidden="true"></i>')));
+                }else{
+                    jQuery("#searchList")
+                    .append(jQuery('<li class="list-group-item list-group-item-warning">')
+                    .append(jQuery('<span ></span>').text(todo.text)));
+                }
+                
+                console.log(todo);
+                });
+                jQuery("#searchList").css({"display":"block"});                
+                
+                
+            }
+            })
+        }
+    })
+    
+    $(document).on('click','#resetBtn', function(event){
+        event.preventDefault();
+        event.stopPropagation();
+        jQuery("#todoList").css({"display":"block"});
+        jQuery("#searchList").empty();
+        jQuery("#searchList").css({"display":"none"});
+
+    });
 
     function findId(text){
         if(!text.trim()){

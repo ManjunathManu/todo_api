@@ -8,39 +8,31 @@
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.3/css/bootstrap.min.css" integrity="sha384-Zug+QiDoJOrZ5t4lssLdxGhVrurbmBWopoEl+M6BdEfwnCJZtKxi1KgxUyJq13dy" crossorigin="anonymous">
     </head>
     <body>
-        <!-- <div id="myDIV" class="header">
-            <h2>My To Do List</h2>
-            <input type="text" id="myInput" placeholder="Title...">
-            <span class="addBtn">Add</span>
-            <button type="button" class="btn btn-primary">
-                Completed <span class="badge badge-success"></span>
-              </button>
-              <button type="button" class="btn btn-primary">
-                Yet to complete <span class="badge badge-danger"></span>
-              </button>
-        </div>
-        <div id="todos">
-            
-        </div>  
-
-        <button id="logoutBtn" type="click" >Logout</button> -->
         <div class="container-fluid">
             <nav class="navbar navbar-light bg-light">
                 <form class="form-inline">
                     <input class="form-control mr-sm-2"  placeholder="Title..." aria-label="Add">
                     <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Add</button>
+                    <button class="btn btn-outline-info my-2 my-sm-0" id="searchBtn"><i class="fa fa-search" aria-hidden="true"></i> </button>                   
                     <button type="button" class="btn btn-outline-primary">Logout</button>
                 </form>
+                <button type="button" class="btn btn-success">
+                    Completed <span class="badge badge-light"></span>
+                </button>
+                <button type="button" class="btn btn-warning">
+                    Yet to complete <span class="badge badge-danger"></span>
+                </button>
+                <button type="button" class="btn btn-info" id="resetBtn">
+                    Reset
+                </button>
             </nav>
-            <button type="button" class="btn btn-success">
-                Completed <span class="badge badge-light"></span>
-              </button>
-              <button type="button" class="btn btn-warning">
-                Yet to complete <span class="badge badge-danger"></span>
-              </button>
+           
 
-            <ul class="list-group">
+            <ul class="list-group" id="todoList" style="display:block">
          
+            </ul>
+            <ul class="list-group" id="searchList" style="display:none">
+
             </ul>
     
         </div>

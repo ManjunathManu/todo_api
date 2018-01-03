@@ -138,24 +138,53 @@ input {
 .btn.btn-outline-primary{
     position: absolute;
     right:20px;
-    top:5px;
+    top:8px;
     align-content:  right;
 }
 
 .btn.btn-outline-danger.btn-sm{
     position: absolute;
     right:20px;
-    top:5px;
+    top:8px;
     align-content:  right;
 }
 .btn.btn-outline-success.btn-sm{
     position: absolute;
     right:50px;
-    top:5px;
+    top:8px;
     align-content:  right;
 }
 .input{
     height:30px;
+}
+.form-control.mr-sm-2{
+    width:540px !important;    
+}
+.btn.btn-outline-success.my-2.my-sm-0{
+    position: absolute;
+    top:8px;
+    right:600px;
+}
+.btn.btn-outline-info.my-2.my-sm-0{
+    position: absolute;
+    top:8px;
+    right:670px;
+}
+
+.btn.btn-warning{
+    position: absolute;
+    right:130px;
+    top:8px;
+}
+.btn.btn-success{
+    position: absolute;
+    right:290px;
+    top:8px;
+}
+#resetBtn{
+    position: absolute;
+    right:530px;
+    top:8px;
 }
 /* other*/
 /* CSS REQUIRED */

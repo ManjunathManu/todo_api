@@ -127,6 +127,29 @@ app.patch('/todos/:id', authenticate, (req, res) => {
   })
 });
 
+app.post('/todos/search', authenticate, (req, res)=>{
+   var text = req.body.text;
+   var todosText =[];
+   if(text === " "){
+    return res.status(404).send();
+  }
+  Todo.find({"text": new RegExp(text, 'i'), _creator:req.user._id}).then((todos)=>{
+      if(!todos.length){
+        return res.status(404).send();
+      }
+      
+      todos.forEach((todo)=>{
+        // todosText.push(todo.text);
+        todoSubObj={}
+        todoSubObj.text = todo.text;
+        todoSubObj.completed = todo.completed;
+        todosText.push(todoSubObj);
+      })
+      res.send(todosText);
+  }).catch((e)=>{
+    res.status(404).send();
+  })
+})
 
 // POST /users
 app.post('/users', (req, res) => {
@@ -137,7 +160,7 @@ app.post('/users', (req, res) => {
     return user.generateAuthToken();
   }).then((token) => {
     res.header('Authorization',`Bearer ${token}`).send(user);
-}).catch((e) => {
+  }).catch((e) => {
     res.status(400).send(e.message);
   })
 });
