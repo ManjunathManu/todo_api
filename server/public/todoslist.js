@@ -149,6 +149,14 @@ $(document).ready(function(){
                 beforeSend:function(xhr){xhr.setRequestHeader('Authorization', window.localStorage.getItem('token'))},
                 success:function(todo){
                     // console.log(todo);
+                    if(todo.todo.completed == true){
+                        completed--;
+                        jQuery(".badge.badge-light").text(completed);
+                    }else{
+                        yetToComplete--;
+                        jQuery(".badge.badge-danger").text(yetToComplete);
+                
+                    }
                 }
             })
         })
@@ -202,7 +210,13 @@ $(document).ready(function(){
                     event.stopPropagation();
                     $(this).hide();
                     if(newText.trim()){
-                        $(this).parent().children()[0].innerText = newText;
+                        //$(this).parent().children()[0].innerText = newText;
+                        $(this).parent().children().each(function(child){
+                            if(this.tagName === "SPAN"){
+                                this.innerText = newText;
+                                return false;
+                            }
+                        })
                         findId(orValue)
                         .done(function(id){
                             editTodo(newText, false, id);
@@ -212,7 +226,12 @@ $(document).ready(function(){
                         })
                     }else{
                         alert("Title required:Cannot edit the todo");
-                        $(this).parent().children()[0].innerText = orValue;
+                        $(this).parent().children().each(function(child){
+                            if(this.tagName === "SPAN"){
+                                this.innerText = orValue;
+                                return false;
+                            }
+                        })
                     }
                     
                 }
@@ -227,7 +246,7 @@ $(document).ready(function(){
                             $(this).hide();
                             if(newText.trim()){
                                 //$(this).parent().children()[0].innerText = newText;
-                                $(this).clone().children().each(function(child){
+                                $(this).parent().children().each(function(child){
                                     if(this.tagName === "SPAN"){
                                     this.innerText=newText;
                                     return false;
@@ -243,14 +262,12 @@ $(document).ready(function(){
                                 })
                             }else{
                                 alert("Title required:Cannot edit the todo");
-                                $(this).clone().children().each(function(child){
+                                $(this).parent().children().each(function(child){
                                     if(this.tagName === "SPAN"){
                                      this.innerText= orValue;
                                     return false;
                                     }
                                    })
-                                 $(this).parent().children()[0].innerText = orValue;
-                        
                             }
                             
                         }

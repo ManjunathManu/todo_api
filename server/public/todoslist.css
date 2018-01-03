@@ -154,5 +154,8 @@ input {
     top:5px;
     align-content:  right;
 }
+.input{
+    height:30px;
+}
 /* other*/
 /* CSS REQUIRED */
