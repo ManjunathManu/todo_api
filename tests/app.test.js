@@ -1,13 +1,13 @@
 const expect = require('expect');
 //const request = require('supertest');
 const {ObjectID} =require('mongodb');
-const {app} = require('./../server2');
+const {app} = require('./../app');
 const {Todo} = require('./../models/todo');
 const {User} = require('./../models/users');
 const {todos, populateTodos, users, populateUsers}  = require('./seed/seed');
 const chai = require('chai');
-//var expect = chai.expect;
-var chaiHttp = require('chai-http');
+//let expect = chai.expect;
+let chaiHttp = require('chai-http');
 chai.use(chaiHttp);
 
 beforeEach(populateUsers);
@@ -15,7 +15,7 @@ beforeEach(populateTodos);
 
 describe('POST /todos', ()=>{
   it('should create a new todo',(done)=>{
-      var text = 'new todo user 1';
+      let text = 'new todo user 1';
       console.log(users[0].tokens[0].token);
      chai.request(app)
       .post('/todos')
@@ -40,8 +40,8 @@ describe('POST /todos', ()=>{
 
 describe('POST /users',()=>{
   it ('should create a new user',(done)=>{
-    var email = 'sachin@example.com'
-    var password = 'sachin'
+    let email = 'sachin@example.com'
+    let password = 'sachin'
     chai.request(app)
     .post('/users')
     .send({email,password})
@@ -57,7 +57,7 @@ describe('POST /users',()=>{
 
 // describe('POST /todos', () => {
 //   it('should create a new todo', (done) => {
-//     var text = 'Test todo text';
+//     let text = 'Test todo text';
 
 //     request(app)
 //       .post('/todos')
@@ -140,7 +140,7 @@ describe('POST /users',()=>{
 
 // describe('DELETE /todos/:id',()=>{
 //   it('show  return 200 for successfull delete',(done)=>{
-//     var id =todos[1]._id.toHexString() ;
+//     let id =todos[1]._id.toHexString() ;
 //     request(app)
 //     .get(`/todos/${id}`)
 //     .expect(200)
@@ -165,8 +165,8 @@ describe('POST /users',()=>{
 
 // describe('PATCH /todos/:id',()=>{
 //   it('should return 200 and update text on successful update',(done)=>{
-//       var id = todos[0]._id.toHexString();
-//       var text = 'postman update'
+//       let id = todos[0]._id.toHexString();
+//       let text = 'postman update'
 //       request(app)
 //       .patch(`/todos/${id}`)
 //       .send({
@@ -181,8 +181,8 @@ describe('POST /users',()=>{
 //       .end(done);
 //   });
 //   it('should make completedAt null if completed is false',(done)=>{
-//     var id = todos[1]._id.toHexString();
-//     var text = 'update';
+//     let id = todos[1]._id.toHexString();
+//     let text = 'update';
 //     request(app)
 //     .patch(`/todos/${id}`)
 //     .send({text,completed:false})
@@ -223,8 +223,8 @@ describe('POST /users',()=>{
 
 // describe('POST /users',()=>{
 //   it('should create a user',(done)=>{
-//     var email = 'manu@example.com';
-//     var password = 'qwertyu';
+//     let email = 'manu@example.com';
+//     let password = 'qwertyu';
 //     request(app)
 //     .post('/users')
 //     .send({email,password})
@@ -250,8 +250,8 @@ describe('POST /users',()=>{
 //   });
 
 //   it('should return validation error if request invalid',(done)=>{
-//     var email = 'manju@example.com'
-//     var password = 'manu'
+//     let email = 'manju@example.com'
+//     let password = 'manu'
 //     request(app)
 //     .post('/users')
 //     .send({email, password})
@@ -268,7 +268,7 @@ describe('POST /users',()=>{
 //   })
 
 //   it('should return 400 if email already exist',(done)=>{
-//     var email=users[0].email;
+//     let email=users[0].email;
 //     request(app)
 //     .post('/users')
 //     .send({email, password:'passwoed'})

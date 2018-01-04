@@ -22,6 +22,9 @@ $(document).ready(function(){
                 alert('Not connect.\n Verify Network.');
             } else if (jqXHR.status == 404) {
                 alert('Requested page not found. [404]');
+                // jQuery('<div class="alert alert-danger" role="alert">Page not found</div>');
+                jQuery("#inputText").val("");
+                
             } else if (jqXHR.status == 500) {
                 alert('Internal Server Error [500].');
             } else if (exception === 'parsererror') {
@@ -31,6 +34,7 @@ $(document).ready(function(){
             } else if (exception === 'abort') {
                 alert('Ajax request aborted.');
             }else if(jqXHR.status == 401){
+                // jQuery('<div class="alert alert-danger" role="alert"></div>').text("Unauthorized user.")
                 alert('Unauthorized user')
             } else if(jqXHR.status == 400){
                alert('Bad request:Todos title required');
@@ -280,28 +284,12 @@ $(document).ready(function(){
                 beforeSend:function(xhr){xhr.setRequestHeader('Authorization', window.localStorage.getItem('token'))},
                 success:function(todos){
                 jQuery("#inputText").val("")
-                jQuery("#todoList").empty();
-                // jQuery("#todoList").css({"display":"none"});    
-                
+                jQuery("#todoList").empty();                
                 todos.forEach(function(todo){
                     populateTodo(todo.text, todo.completed);
-                // if(todo.completed === true){
-                //     jQuery("#searchList")
-                //     .append(jQuery('<li class="list-group-item list-group-item-success">')
-                //     .append(jQuery('<span ></span>').text(todo.text))
-                //     .prepend(jQuery('<i class="fa fa-check-square-o" aria-hidden="true"></i>')));
-                // }else{
-                //     jQuery("#searchList")
-                //     .append(jQuery('<li class="list-group-item list-group-item-warning">')
-                //     .append(jQuery('<span ></span>').text(todo.text)));
-                // }
-                
-                
                 });
-                
-                
-            },
-        })
+                },
+            })
         }
     });
     

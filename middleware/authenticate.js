@@ -1,7 +1,7 @@
-var {User} = require('./../models/users');
+let {User} = require('./../models/users');
 
-var authenticate = (req, res, next)=> {
-var token = req.header('Authorization').split(' ')[1];
+let authenticate = (req, res, next)=> {
+let token = req.header('Authorization').split(' ')[1];
 
 User.findByToken(token)
 .then((user)=>{
@@ -9,7 +9,6 @@ User.findByToken(token)
         req.token = user.refreshedToken;
         delete user.refreshedToken;
         req.user = user;  
-        //console.log(user);
         next();
     }else{
         req.user = user;

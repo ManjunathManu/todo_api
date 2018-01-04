@@ -4,7 +4,7 @@ const jwt = require('jsonwebtoken-refresh');
 const _ = require('lodash');
 const  bcrypt = require('bcryptjs');
 
-var UserSchema = new mongoose.Schema({
+let UserSchema = new mongoose.Schema({
   email: {
     type: String,
     required: true,
@@ -22,32 +22,20 @@ var UserSchema = new mongoose.Schema({
     required:true,
     minlength:6
   }
-  // tokens:[{
-  //   access:{
-  //     type:String,
-  //     requires:true
-  //   },
-    
-  //   token:{
-  //    type:String,
-  //     required: true
-  //   }
-  //  }],
-   
 },{usePushEach : true});
 
 
 UserSchema.methods.toJSON = function () {
-  var user = this;
-  var userObject = user.toObject();
+  let user = this;
+  let userObject = user.toObject();
 
   return _.pick(userObject, ['_id', 'email']);
 };
 
 UserSchema.methods.generateAuthToken = function () {
-  var user = this;
-  var access = 'auth';
-  var token = jwt.sign({_id: user._id.toHexString(), access}, process.env.JWT_SECRET,{expiresIn:'1h'}).toString();
+  let user = this;
+  let access = 'auth';
+  let token = jwt.sign({_id: user._id.toHexString(), access}, process.env.JWT_SECRET,{expiresIn:'1h'}).toString();
   //user.tokens.push({access, token});
   //user.tokens = user.tokens.concat([{access, token}]);
 
@@ -57,16 +45,16 @@ UserSchema.methods.generateAuthToken = function () {
 };
 
 // UserSchema.methods.deleteToken = function(token){
-//   var user = this;
+//   let user = this;
 
 //   return user.update({$pull:{tokens:{token} } });
 // }
 
 UserSchema.statics.findByToken = function (token){
-  var foundUser = null;
-  var refreshedToken = null;
-  var User = this;
-  var decoded;
+  let foundUser = null;
+  let refreshedToken = null;
+  let User = this;
+  let decoded;
   try{
         // console.log('trying to decode token----',token)
         // console.log('----');
@@ -75,7 +63,7 @@ UserSchema.statics.findByToken = function (token){
     catch(e){
       if(e.message == "jwt expired"){
         // console.log(e.message)
-        var oriDecoded = jwt.verify(token, process.env.JWT_SECRET, {'ignoreExpiration':true});
+        let oriDecoded = jwt.verify(token, process.env.JWT_SECRET, {'ignoreExpiration':true});
          refreshedToken = jwt.refresh(oriDecoded, 120, process.env.JWT_SECRET);
         decoded = jwt.verify(refreshedToken, process.env.JWT_SECRET);  
         
@@ -111,7 +99,7 @@ UserSchema.statics.findByToken = function (token){
 };
 
 UserSchema.pre('save', function (next){
-    var user = this;
+    let user = this;
     if(user.isModified('password'))
     {
       bcrypt.genSalt(10,(err, salt)=>{
@@ -128,7 +116,7 @@ UserSchema.pre('save', function (next){
 });
 
 UserSchema.statics.findByCredentials = function (email, password) {
-  var User = this;
+  let User = this;
 
   return User.findOne({email}).then((user) => {
     if (!user) {
@@ -149,7 +137,7 @@ UserSchema.statics.findByCredentials = function (email, password) {
 };
 
 UserSchema.statics.getUsers = function(){
-  var User = this;
+  let User = this;
   return User.find({}).then((users)=>{
     return users;
   }).catch((e)=>{
@@ -157,5 +145,5 @@ UserSchema.statics.getUsers = function(){
   })
 }
 
-var User = mongoose.model('User', UserSchema);
+let User = mongoose.model('User', UserSchema);
 module.exports = {User}
