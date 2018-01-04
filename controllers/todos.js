@@ -1,8 +1,10 @@
 const express = require('express');
-let router = express.Router();
-let {authenticate} = require('./middleware/authenticate');
-let {Todo} = require('./../models/todo');
+const _ = require('lodash');
 const {ObjectID} = require('mongodb');
+
+let router = express.Router();
+let {authenticate} = require('./../middleware/authenticate');
+let {Todo} = require('./../models/todo');
 
 
 router.post('/', authenticate, (req, res) => {

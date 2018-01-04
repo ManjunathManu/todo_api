@@ -1,8 +1,9 @@
 const express = require('express');
 const {ObjectID} = require('mongodb');
+const _ = require('lodash');
 
 let {User} = require('./../models/users');
-let {authenticate} = require('./middleware/authenticate');
+let {authenticate} = require('./../middleware/authenticate');
 
 let router = express.Router();
 
