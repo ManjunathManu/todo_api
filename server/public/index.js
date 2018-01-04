@@ -3,24 +3,7 @@ if(window.localStorage.getItem('token') && $.cookie('test')){
 }
 
 $(document).ready(function(){
-
-    //  history.pushState({ page: 1 }, "Title 1", "#no-back");
-    // window.onhashchange = function (event) {
-    //   window.location.hash = "no-back";
-    // };
-    // $(window).on('unload',function(){
-    //     if(localStorage.getItem('token')){
-    //         alert('Alreadylogged in');
-    //         // console.log("hahahahahhaha", token);
-    //         window.location.href="todoslist.html"
-    //     }else{
-    //         alert('Not logged in');
-    //         window.location.href="index.html"
-    //     } 
-    // })
-   
-
-    window.history.pushState('', null,'./');
+   window.history.pushState('', null,'./');
     $(window).on('popstate',function(){
         location.reload(true);
     });
@@ -60,7 +43,6 @@ $(document).ready(function(){
 
     $("#signup_form").submit(function(event){
         event.preventDefault();
-        // $(".signup > input").attr('value','signing up...');
         var email = $("#exampleInputEmail2").val();
         var password = $("#exampleInputPassword2").val();
         if(validateEmail(email)){
@@ -89,7 +71,7 @@ $(document).ready(function(){
             alert('Invalid email ID');
         }
        
-          });
+    });
 
     $("#login_form").submit(function(event){
         event.preventDefault();

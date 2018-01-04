@@ -62,7 +62,7 @@ UserSchema.methods.generateAuthToken = function () {
 //   return user.update({$pull:{tokens:{token} } });
 // }
 
-UserSchema.statics.findByToken = function (token,success,error){
+UserSchema.statics.findByToken = function (token){
   var foundUser = null;
   var refreshedToken = null;
   var User = this;
@@ -82,35 +82,32 @@ UserSchema.statics.findByToken = function (token,success,error){
         // console.log('refreshedToken',refreshedToken);
         // console.log('-------');
       }else{
-        //console.log('can not decode==',e.message);
+        // console.log('can not decode==',e.message);
         return Promise.reject();
       }   
     }
   
     // console.log('decoded id',decoded._id);
 
-  User.findOne({
+  return User.findOne({
     '_id':decoded._id,
-    // 'tokens.token':token,//enclose in quotes if . is used in query
-    // 'tokens.access':'auth'
-  },function(err, user){
-    if(err){
-      error(err);
+  })
+  .then((user)=>{
+    foundUser = user;
+    // console.log('user==',user);
+    if(refreshedToken){
+    // console.log("ref token is there")
+    foundUser.refreshedToken = refreshedToken;
+    // console.log('foundUser==',foundUser);
+    return Promise.resolve(foundUser);
     }else{
-      foundUser = user;
-      // console.log('user==',user);
-      if(refreshedToken){
-      //console.log("ref token is there")
-      foundUser.refreshedToken = refreshedToken;
-      // console.log('foundUser==',foundUser);
-      success(foundUser)
-      }else{
-        //console.log("ref token is not there");
-        success(user);
-      }
-  
+      // console.log("ref token is not there");
+      return Promise.resolve(user);
     }
-  });
+  })
+  .catch((err)=>{
+    return Promise.reject(err);
+  })
 };
 
 UserSchema.pre('save', function (next){

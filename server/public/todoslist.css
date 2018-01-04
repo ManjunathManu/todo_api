@@ -1,15 +1,7 @@
-/* Include the padding and border in an element's total width and height */
 * {
     box-sizing: border-box;
 }
 
-/* Remove margins and padding from the list */
-/* ul {
-    margin: 0;
-    padding: 0;
-} */
-
-/* Style the list items */
 ul li {
     cursor: pointer;
     position: relative;
@@ -25,10 +17,7 @@ ul li {
     user-select: none;
 }
 
-/* Set all odd list items to a different color (zebra-stripes) */
-/* ul li:nth-child(odd) {
-    background: #f9f9f9;
-} */
+
 
 /* Darker background-color on hover */
 ul li:hover {
@@ -157,34 +146,13 @@ input {
 .input{
     height:30px;
 }
-.form-control.mr-sm-2{
-    width:540px !important;    
-}
-.btn.btn-outline-success.my-2.my-sm-0{
-    position: absolute;
-    top:8px;
-    right:600px;
-}
-.btn.btn-outline-info.my-2.my-sm-0{
-    position: absolute;
-    top:8px;
-    right:670px;
+
+.input-group{
+    width:60% !important;
 }
 
-.btn.btn-warning{
-    position: absolute;
+.btn-group{
+    position: absolute !important;
     right:130px;
-    top:8px;
+    
 }
-.btn.btn-success{
-    position: absolute;
-    right:290px;
-    top:8px;
-}
-#resetBtn{
-    position: absolute;
-    right:530px;
-    top:8px;
-}
-/* other*/
-/* CSS REQUIRED */

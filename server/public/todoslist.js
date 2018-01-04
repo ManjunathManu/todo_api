@@ -1,18 +1,17 @@
 $(document).ready(function(){
+    getAllTodos();
+    var loggedOut;
+    var completed=0;
+    var yetToComplete=0;
 
-   var loggedOut;
-   var completed=0;
-   var yetToComplete=0;
     $(window).on('beforeunload',function(){
-            //console.log($.cookie("test"));
             if(!($.cookie('test')) && !loggedOut){
-               // alert('no keep me');
                 $('#logoutBtn').click();
-
             }
     });
     
     window.history.pushState('', null,'./');
+
     $(window).on('popstate',function(){
         location.reload(true);
     });
@@ -43,7 +42,7 @@ $(document).ready(function(){
         
     var ul = jQuery('<ul></ul>').addClass("todosList");
 
-     $(".btn.btn-outline-primary").on('click',function(){
+    $(".btn.btn-outline-primary").on('click',function(){
         var token = window.localStorage.getItem('token');
         loggedOut=true;
         jQuery(".btn.btn-outline-primary").text("Logging out");
@@ -59,79 +58,20 @@ $(document).ready(function(){
             }
          });
          $.removeCookie("test");
-     });
-
-    $.ajax({
-            type:"GET",
-            url:"/todos",
-            beforeSend:function(xhr){xhr.setRequestHeader('Authorization', window.localStorage.getItem('token'))},
-            success:function(todos){
-            todos.todos.forEach(function(todo){
-                if(todo.completed === true){
-                    jQuery("#todoList")
-                    .append(jQuery('<li class="list-group-item list-group-item-success">')
-                    .append(jQuery('<span ></span>').text(todo.text))
-                    .prepend(jQuery('<i class="fa fa-check-square-o" aria-hidden="true"></i>'))                    
-                    .append(jQuery('<button type="button" class="btn btn-outline-danger btn-sm">').append(' <i class="fa fa-trash" aria-hidden="true"></i>'))
-                    .append(jQuery('<button type="button" class="btn btn-outline-success btn-sm">').append(' <i class="fa fa-pencil" aria-hidden="true"></i>')));
-                    
-                    completed++;
-                }else{
-                    jQuery("#todoList")
-                    .append(jQuery('<li class="list-group-item list-group-item-warning">')
-                    .append(jQuery('<span ></span>').text(todo.text))                    
-                    .append(jQuery('<button type="button" class="btn btn-outline-danger btn-sm">').append(' <i class="fa fa-trash" aria-hidden="true"></i>'))
-                    .append(jQuery('<button type="button" class="btn btn-outline-success btn-sm">').append(' <i class="fa fa-pencil" aria-hidden="true"></i>')));
-                    yetToComplete++;
-                
-                }
-                })
-                jQuery(".badge.badge-light").text(completed);
-                jQuery(".badge.badge-danger").text(yetToComplete);
-                
-                jQuery("#todos").html(ul);
-                }
     });
 
-
-    $(".form-control.mr-sm-2").keypress(function(e){
+    $("#inputText").keypress(function(e){
         var key = e.which;
         if(key == 13){
-            $(".form-inline").submit();
-        e.preventDefault();
-        return false;
+            addTodo();
         }
     });
 
+    $("#addBtn").on("click", function(){
+        addTodo();
+    });
 
-     $(".form-inline").on('submit', function(e){
-         e.preventDefault();
-         if(jQuery(".form-control.mr-sm-2").val()==="" || !(jQuery(".form-control.mr-sm-2").val()).trim()){
-             alert('Title required!!');
-         }else{
-            $.ajax({
-                type:"POST",
-                data:JSON.stringify({text:jQuery(".form-control.mr-sm-2").val()}),
-                contentType: "application/json; charset=utf-8",
-                dataType:"json",             
-                url:"/todos",
-                beforeSend:function(xhr){xhr.setRequestHeader('Authorization', window.localStorage.getItem('token'))},
-                success:function(todo){
-                   jQuery(".form-control.mr-sm-2").val("")
-                    jQuery("#todoList").append(jQuery('<li class="list-group-item list-group-item-warning">')
-                    .append(jQuery('<span></span>').text(todo.text))                                       
-                    .append(jQuery('<button type="button" class="btn btn-outline-danger btn-sm">').append(' <i class="fa fa-trash" aria-hidden="true"></i>'))
-                    .append(jQuery('<button type="button" class="btn btn-outline-success btn-sm">').append(' <i class="fa fa-pencil" aria-hidden="true"></i>')));
-                    yetToComplete++;
-                    jQuery(".badge.badge-danger").text(yetToComplete);
-                
-                   }
-            })
-         }
-        
-     });
-
-     $(document).on("click", ".btn.btn-outline-danger.btn-sm", function(event){
+    $(document).on("click", ".btn.btn-outline-danger.btn-sm", function(event){
          event.stopPropagation();
         //var text = getText(this);
         $(this).parent().children().each(function(child){
@@ -139,7 +79,8 @@ $(document).ready(function(){
             text = this.innerText;
             return false;
             }
-           })
+        })
+
         $(this).parent().hide();
         findId(text)
         .done(function(id){
@@ -326,8 +267,7 @@ $(document).ready(function(){
     $(document).on('click','#searchBtn', function(event){
         event.preventDefault();
         event.stopPropagation();
-        $("#searchList").empty();
-        var text = (jQuery(".form-control.mr-sm-2").val()).trim();
+        var text = (jQuery("#inputText").val()).trim();
         if(text==="" || !text.trim()){
             alert('Title required!!');
         }else{
@@ -339,39 +279,79 @@ $(document).ready(function(){
                 url:"/todos/search",
                 beforeSend:function(xhr){xhr.setRequestHeader('Authorization', window.localStorage.getItem('token'))},
                 success:function(todos){
-                jQuery(".form-control.mr-sm-2").val("")
-                jQuery("#todoList").css({"display":"none"});    
+                jQuery("#inputText").val("")
+                jQuery("#todoList").empty();
+                // jQuery("#todoList").css({"display":"none"});    
                 
                 todos.forEach(function(todo){
-                if(todo.completed === true){
-                    jQuery("#searchList")
-                    .append(jQuery('<li class="list-group-item list-group-item-success">')
-                    .append(jQuery('<span ></span>').text(todo.text))
-                    .prepend(jQuery('<i class="fa fa-check-square-o" aria-hidden="true"></i>')));
-                }else{
-                    jQuery("#searchList")
-                    .append(jQuery('<li class="list-group-item list-group-item-warning">')
-                    .append(jQuery('<span ></span>').text(todo.text)));
-                }
+                    populateTodo(todo.text, todo.completed);
+                // if(todo.completed === true){
+                //     jQuery("#searchList")
+                //     .append(jQuery('<li class="list-group-item list-group-item-success">')
+                //     .append(jQuery('<span ></span>').text(todo.text))
+                //     .prepend(jQuery('<i class="fa fa-check-square-o" aria-hidden="true"></i>')));
+                // }else{
+                //     jQuery("#searchList")
+                //     .append(jQuery('<li class="list-group-item list-group-item-warning">')
+                //     .append(jQuery('<span ></span>').text(todo.text)));
+                // }
                 
-                console.log(todo);
+                
                 });
-                jQuery("#searchList").css({"display":"block"});                
                 
                 
-            }
-            })
+            },
+        })
         }
-    })
+    });
     
     $(document).on('click','#resetBtn', function(event){
+        completed=0;
+        yetToComplete=0;
         event.preventDefault();
         event.stopPropagation();
-        jQuery("#todoList").css({"display":"block"});
-        jQuery("#searchList").empty();
-        jQuery("#searchList").css({"display":"none"});
+        jQuery("#todoList").empty();
+        getAllTodos();
 
     });
+
+    $(document).on('click', '#completedBtn', function(event){
+        createReq("GET", "/todos")
+        .done(function(todos){
+            jQuery("#todoList").empty();
+            todos.todos.forEach(function(todo){
+                if(todo.completed)
+                    populateTodo(todo.text, todo.completed);
+            })
+        })
+    });
+
+    $(document).on('click', '#yetToCompleteBtn', function(event){
+        createReq("GET", "/todos")
+        .done(function(todos){
+            jQuery("#todoList").empty();
+            todos.todos.forEach(function(todo){
+                if(!todo.completed)
+                    populateTodo(todo.text, todo.completed);
+            })
+        })
+    });
+    
+    function getAllTodos(){
+        createReq("GET","/todos")
+        .done(function(todos){
+            todos.todos.forEach(function(todo){
+                populateTodo(todo.text, todo.completed);
+                if(todo.completed === true){
+                    completed++;
+                }else{
+                    yetToComplete++;
+                }
+                jQuery(".badge.badge-light").text(completed);
+                jQuery(".badge.badge-danger").text(yetToComplete);
+            })
+        });
+    };
 
     function findId(text){
         if(!text.trim()){
@@ -385,7 +365,7 @@ $(document).ready(function(){
             contentType: "application/json; charset=utf-8",
             beforeSend:function(xhr){xhr.setRequestHeader('Authorization', window.localStorage.getItem('token'))},
            });
-        };
+    };
 
     function editTodo(text, completed, id){
         if(!text.trim()){
@@ -400,25 +380,56 @@ $(document).ready(function(){
             contentType: "application/json; charset=utf-8",
             beforeSend:function(xhr){xhr.setRequestHeader('Authorization', window.localStorage.getItem('token'))}
         })
-    }
+    };
 
-    // function getText(child){
-    //     $(child).parent().children().each(function(child){
-    //         if(this.tagName === "SPAN"){
-    //         text= this.innerText;
-    //         return text;
-    //         return false;
-    //         }
-    //     })
-    // }
+    function createReq(type, url){
+        return $.ajax({
+            type,
+            url,
+            contentType:"application/json; charset=utf-8",
+            dataType:"json",
+            beforeSend:function(xhr){xhr.setRequestHeader('Authorization', window.localStorage.getItem('token'))}
+        })
+    };
 
-    // function setText(child, text){
-    //     $(child).parent().children().each(function(child){
-    //         if(this.tagName === "SPAN"){
-    //             this.innerText = text;
-    //             return false;
-    //         }
-    //     })
-    // }
+    function addTodo(){
+        if(jQuery("#inputText").val()==="" || !(jQuery("#inputText").val()).trim()){
+            alert('Title required!!');
+        }else{
+           $.ajax({
+               type:"POST",
+               data:JSON.stringify({text:jQuery("#inputText").val()}),
+               contentType: "application/json; charset=utf-8",
+               dataType:"json",             
+               url:"/todos",
+               beforeSend:function(xhr){xhr.setRequestHeader('Authorization', window.localStorage.getItem('token'))},
+               success:function(todo){
+                    // jQuery("#resetBtn").click();
+                    populateTodo(todo.text,false);
+                    jQuery("#inputText").val("")
+                    yetToComplete++;
+                    jQuery(".badge.badge-danger").text(yetToComplete);
+               }
+           })
+        }
+    };
+
+    function populateTodo(text, complete){
+        if(complete === true){
+            jQuery("#todoList")
+            .append(jQuery('<li class="list-group-item list-group-item-success">')
+            .append(jQuery('<span ></span>').text(text))
+            .prepend(jQuery('<i class="fa fa-check-square-o" aria-hidden="true"></i>'))                    
+            .append(jQuery('<button type="button" class="btn btn-outline-danger btn-sm">').append(' <i class="fa fa-trash" aria-hidden="true"></i>'))
+            .append(jQuery('<button type="button" class="btn btn-outline-success btn-sm">').append(' <i class="fa fa-pencil" aria-hidden="true"></i>')));
+        }else{
+            jQuery("#todoList")
+            .append(jQuery('<li class="list-group-item list-group-item-warning">')
+            .append(jQuery('<span ></span>').text(text))                    
+            .append(jQuery('<button type="button" class="btn btn-outline-danger btn-sm">').append(' <i class="fa fa-trash" aria-hidden="true"></i>'))
+            .append(jQuery('<button type="button" class="btn btn-outline-success btn-sm">').append(' <i class="fa fa-pencil" aria-hidden="true"></i>')));
+        }
+        // jQuery(".badge.badge-danger").text(yetToComplete);
+    };
     
- });
+});

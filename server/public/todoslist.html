@@ -10,29 +10,34 @@
     <body>
         <div class="container-fluid">
             <nav class="navbar navbar-light bg-light">
-                <form class="form-inline">
-                    <input class="form-control mr-sm-2"  placeholder="Title..." aria-label="Add">
-                    <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Add</button>
-                    <button class="btn btn-outline-info my-2 my-sm-0" id="searchBtn"><i class="fa fa-search" aria-hidden="true"></i> </button>                   
-                    <button type="button" class="btn btn-outline-primary">Logout</button>
-                </form>
-                <button type="button" class="btn btn-success">
-                    Completed <span class="badge badge-light"></span>
-                </button>
-                <button type="button" class="btn btn-warning">
-                    Yet to complete <span class="badge badge-danger"></span>
-                </button>
-                <button type="button" class="btn btn-info" id="resetBtn">
-                    Reset
-                </button>
+                <div class="input-group">
+                    <input type="text" class="form-control" id="inputText" placeholder="Add or Search..." aria-label="Recipient's username" aria-describedby="basic-addon2">
+                    <div class="input-group-append">
+                        <button class="btn btn-outline-info my-2 my-sm-0" id="searchBtn"><i class="fa fa-search" aria-hidden="true"></i> </button>
+                        <button class="btn btn-outline-success my-2 my-sm-0" type="submit" id="addBtn">Add</button>
+                     </div>
+                                   
+                </div>
+                
+                <div class="btn-group" role="group" aria-label="Basic example">
+                    <button type="button" class="btn btn-info" id="resetBtn">
+                        Reset
+                    </button>
+                    <button type="button" class="btn btn-success" id="completedBtn">
+                        Completed <span class="badge badge-light"></span>
+                    </button>
+                    <button type="button" class="btn btn-warning" id="yetToCompleteBtn">
+                        Yet to complete <span class="badge badge-danger"></span>
+                    </button>
+                    
+                </div>
+            <button type="button" class="btn btn-outline-primary">Logout</button>
+                
             </nav>
            
 
-            <ul class="list-group" id="todoList" style="display:block">
+            <ul class="list-group" id="todoList">
          
-            </ul>
-            <ul class="list-group" id="searchList" style="display:none">
-
             </ul>
     
         </div>
