@@ -106,26 +106,6 @@ User.findByToken = async function (token, callback) {
   } catch (err) {
     throw new Error('Error occured while refreshing the token', err);
   }
-
-  // return User.findOne({
-  //   '_id':decoded._id,
-  // })
-  // .then((user)=>{
-  //   foundUser = user;
-  //   // console.log('user==',user);
-  //   if(refreshedToken){
-  //   // console.log("ref token is there")
-  //   foundUser.refreshedToken = refreshedToken;
-  //   // console.log('foundUser==',foundUser);
-  //   return Promise.resolve(foundUser);
-  //   }else{
-  //     // console.log("ref token is not there");
-  //     return Promise.resolve(user);
-  //   }
-  // })
-  // .catch((err)=>{
-  //   return Promise.reject(err);
-  // })
 };
 
 User.pre("save", async function(user,next){

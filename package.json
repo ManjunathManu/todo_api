@@ -27,6 +27,7 @@
     "mongodb": "^2.2.5",
     "mongoose": "^4.13.6",
     "ottoman": "^1.0.4",
+    "ottoman-in": "^1.2.3",
     "socket.io": "^2.0.4",
     "uuid": "^3.2.1",
     "validator": "^9.2.0"

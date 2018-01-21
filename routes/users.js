@@ -11,16 +11,18 @@ router.post('/', async(req, res) => {
   var body = _.pick(req.body, ['email', 'password']);
   var user = new User(body);
   try {
-    user.save((err) => {
+    user.save(async (err) => {
       if (err){
-        throw err;
-        
-        return res.status(400).send(err.message);
+        res.status(400).send();
+        // throw err;
       }
-    });
+      else{
+        let token = await user.generateAuthToken();
+        res.header('Authorization', `Bearer ${token}`).send(user);
+      }
+  });
 
-    let token = await user.generateAuthToken();
-    res.header('Authorization', `Bearer ${token}`).send(user);
+
   } catch (e) {
     res.status(400).send(e.message);
   }

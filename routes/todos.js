@@ -154,17 +154,17 @@ router.patch('/:id', authenticate, (req, res) => {
 });
   
 router.post('/search', authenticate, (req, res)=>{
-     var text = req.body.text;
+     var searchText = req.body.text;
      var todosText =[];
-     if(text === " "){
+     if(searchText === " "){
       return res.status(404).send();
     }
-    Todo.find({text: new RegExp(text, 'i'), _creator:req.user._id}, (err, todos)=>{
+    Todo.find({text: {$contains : searchText}, _creator:req.user[0]._id}, (err, todos)=>{
       if(err){
-        res.status(404).send();
+        return res.status(404).send();
       }
       if(!todos.length)
-        res.status(404).send();
+        return res.status(404).send();
 
       todos.forEach(todo => {
         let todoSubObj = {};
