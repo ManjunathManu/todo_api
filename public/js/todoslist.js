@@ -94,7 +94,7 @@ $(document).ready(function(){
                 beforeSend:function(xhr){xhr.setRequestHeader('Authorization', window.localStorage.getItem('token'))},
                 success:function(todo){
                     // console.log(todo);
-                    if(todo.todo.completed == true){
+                    if(todo.completed == true){
                         completed--;
                         jQuery(".badge.badge-light").text(completed);
                     }else{
@@ -307,7 +307,7 @@ $(document).ready(function(){
         createReq("GET", "/todos")
         .done(function(todos){
             jQuery("#todoList").empty();
-            todos.todos.forEach(function(todo){
+            todos.forEach(function(todo){
                 if(todo.completed)
                     populateTodo(todo.text, todo.completed);
             })
@@ -318,7 +318,7 @@ $(document).ready(function(){
         createReq("GET", "/todos")
         .done(function(todos){
             jQuery("#todoList").empty();
-            todos.todos.forEach(function(todo){
+            todos.forEach(function(todo){
                 if(!todo.completed)
                     populateTodo(todo.text, todo.completed);
             })
@@ -328,7 +328,7 @@ $(document).ready(function(){
     function getAllTodos(){
         createReq("GET","/todos")
         .done(function(todos){
-            todos.todos.forEach(function(todo){
+            todos.forEach(function(todo){
                 populateTodo(todo.text, todo.completed);
                 if(todo.completed === true){
                     completed++;

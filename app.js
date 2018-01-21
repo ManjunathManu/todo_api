@@ -7,7 +7,7 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const {ObjectID} = require('mongodb');
 
-let {mongoose} = require('./db/mongoose');
+let {ottoman} = require('./db/ottoman');
 let {authenticate} = require('./middleware/authenticate');
 const publicPath = path.join(__dirname,'./public');
 const port = process.env.PORT;
@@ -18,7 +18,7 @@ const formidable = require('express-formidable');
 let app = express();
 
 app.use(bodyParser.json())
-app.use(require('./controllers'));
+app.use(require('./routes'));
 app.use(express.static(publicPath));
 
 

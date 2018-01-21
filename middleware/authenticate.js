@@ -1,25 +1,43 @@
 let {User} = require('./../models/users');
 
-let authenticate = (req, res, next)=> {
+let authenticate = async (req, res, next)=> {
 let token = req.header('Authorization').split(' ')[1];
+try{
+    let user = await User.findByToken(token,(user)=>{
+        if(user.refreshedToken){
+            req.token = user.refreshedToken;
+            delete user.refreshedToken;
+            req.user = user;
+            next();
+        }else{
+            req.user = user;
+            req.token = token;
+            next();
+        }
+    });
 
-User.findByToken(token)
-.then((user)=>{
-    if(user.refreshedToken){
-        req.token = user.refreshedToken;
-        delete user.refreshedToken;
-        req.user = user;  
-        next();
-    }else{
-        req.user = user;
-        req.token = token;
-        next();
-    }
-})
-.catch((err)=>{
+}catch(err){
     res.status(401).send();
-    console.log('error', error);
-});
+}
+
+
+// User.findByToken(token)
+// .then((user)=>{
+//     if(user.refreshedToken){
+//         req.token = user.refreshedToken;
+//         delete user.refreshedToken;
+//         req.user = user;  
+//         next();
+//     }else{
+//         req.user = user;
+//         req.token = token;
+//         next();
+//     }
+// })
+// .catch((err)=>{
+//     res.status(401).send();
+//     console.log('error', error);
+// });
 }
 
 module.exports={authenticate};

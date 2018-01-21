@@ -96,6 +96,9 @@ $(document).ready(function(){
                     contentType: "application/json; charset=utf-8",
                     dataType:"json",                    
                     success:  function(data, status, xhr){
+                        if(!data){
+                            alert('password invalid')
+                        }
                         jQuery("#signInBtn").text("Logging in").attr("disabled","disabled");
                         var token = xhr.getResponseHeader('Authorization');
                         window.localStorage.setItem('token', token);

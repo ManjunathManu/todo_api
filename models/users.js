@@ -1,149 +1,191 @@
-const mongoose = require('mongoose');
+
+// const mongoose = require('mongoose');
+let ottoman = require('./../db/ottoman').ottoman;
+// let ottoman = require('ottoman')
 const validator = require('validator');
 const jwt = require('jsonwebtoken-refresh');
 const _ = require('lodash');
-const  bcrypt = require('bcryptjs');
+const bcrypt = require('bcryptjs');
 
-let UserSchema = new mongoose.Schema({
+let User = ottoman.model('User', {
   email: {
-    type: String,
+    type: "string",
     required: true,
     trim: true,
     minlength: 1,
-    unique:true,
-    validate:{
-      isAsync:false,
-      validator:validator.isEmail,
-      message : "{VALUE} is not a valid email id"
+    unique: true,
+    validate: {
+      isAsync: false,
+      validator: validator.isEmail,
+      message: "{VALUE} is not a valid email id"
     }
   },
-  password:{
-    type:String,
-    required:true,
-    minlength:6
+  password: {
+    type: "string",
+    required: true,
+    minlength: 6
   }
-},{usePushEach : true});
-
-
-UserSchema.methods.toJSON = function () {
+  },{
+    index:{
+      findByEmail:{
+        by:'email',
+        type:'refdoc'
+      }
+    }
+  }
+);
+ 
+ottoman.ensureIndices((err)=>{
+  if(err){
+    throw err;
+  }
+})
+User.toJSON = function () {
   let user = this;
   let userObject = user.toObject();
 
   return _.pick(userObject, ['_id', 'email']);
 };
 
-UserSchema.methods.generateAuthToken = function () {
+User.prototype.generateAuthToken = async function () {
   let user = this;
   let access = 'auth';
-  let token = jwt.sign({_id: user._id.toHexString(), access}, process.env.JWT_SECRET,{expiresIn:'1h'}).toString();
-  //user.tokens.push({access, token});
-  //user.tokens = user.tokens.concat([{access, token}]);
-
-  return user.save().then(() => {
-    return token;
-  });
+  let token = jwt.sign({
+    _id: user._id,
+    access
+  }, process.env.JWT_SECRET, {
+    expiresIn: '1h'
+  }).toString();
+  return token;
 };
 
-// UserSchema.methods.deleteToken = function(token){
-//   let user = this;
 
-//   return user.update({$pull:{tokens:{token} } });
-// }
-
-UserSchema.statics.findByToken = function (token){
-  let foundUser = null;
+User.findByToken = async function (token, callback) {
+  // let foundUser = null;
   let refreshedToken = null;
   let User = this;
   let decoded;
-  try{
-        // console.log('trying to decode token----',token)
-        // console.log('----');
-        decoded = jwt.verify(token, process.env.JWT_SECRET);  
-    }
-    catch(e){
-      if(e.message == "jwt expired"){
-        // console.log(e.message)
-        let oriDecoded = jwt.verify(token, process.env.JWT_SECRET, {'ignoreExpiration':true});
-         refreshedToken = jwt.refresh(oriDecoded, 120, process.env.JWT_SECRET);
-        decoded = jwt.verify(refreshedToken, process.env.JWT_SECRET);  
-        
-        // console.log('refreshedToken',refreshedToken);
-        // console.log('-------');
-      }else{
-        // console.log('can not decode==',e.message);
-        return Promise.reject();
-      }   
-    }
-  
-    // console.log('decoded id',decoded._id);
+  try {
+    // console.log('trying to decode token----',token)
+    // console.log('----');
+    decoded = jwt.verify(token, process.env.JWT_SECRET);
+  } catch (e) {
+    if (e.message == "jwt expired") {
+      // console.log(e.message)
+      let oriDecoded = jwt.verify(token, process.env.JWT_SECRET, {
+        'ignoreExpiration': true
+      });
+      refreshedToken = jwt.refresh(oriDecoded, 120, process.env.JWT_SECRET);
+      decoded = jwt.verify(refreshedToken, process.env.JWT_SECRET);
 
-  return User.findOne({
-    '_id':decoded._id,
-  })
-  .then((user)=>{
-    foundUser = user;
-    // console.log('user==',user);
-    if(refreshedToken){
-    // console.log("ref token is there")
-    foundUser.refreshedToken = refreshedToken;
-    // console.log('foundUser==',foundUser);
-    return Promise.resolve(foundUser);
-    }else{
-      // console.log("ref token is not there");
-      return Promise.resolve(user);
+      // console.log('refreshedToken',refreshedToken);
+      // console.log('-------');
+    } else {
+      // console.log('can not decode==',e.message);
+      return Promise.reject();
     }
-  })
-  .catch((err)=>{
-    return Promise.reject(err);
-  })
+  }
+
+  // console.log('decoded id',decoded._id);
+  try {
+     User.find({
+      '_id': decoded._id
+    },(err, user)=>{
+      if(err)
+        throw err;
+      if (refreshedToken) {
+        user.refreshedToken = refreshedToken;
+        // return user;
+        callback(user);
+      } else {
+        // return user;
+        callback(user);
+      }
+    });
+   
+  } catch (err) {
+    throw new Error('Error occured while refreshing the token', err);
+  }
+
+  // return User.findOne({
+  //   '_id':decoded._id,
+  // })
+  // .then((user)=>{
+  //   foundUser = user;
+  //   // console.log('user==',user);
+  //   if(refreshedToken){
+  //   // console.log("ref token is there")
+  //   foundUser.refreshedToken = refreshedToken;
+  //   // console.log('foundUser==',foundUser);
+  //   return Promise.resolve(foundUser);
+  //   }else{
+  //     // console.log("ref token is not there");
+  //     return Promise.resolve(user);
+  //   }
+  // })
+  // .catch((err)=>{
+  //   return Promise.reject(err);
+  // })
 };
 
-UserSchema.pre('save', function (next){
-    let user = this;
-    if(user.isModified('password'))
-    {
-      bcrypt.genSalt(10,(err, salt)=>{
-        bcrypt.hash(user.password, salt ,(err,hash)=>{
-          user.password= hash;
-          next();
-        })
-      })
-    }
-    else{
-      next();
-    }
+User.pre("save", async function(user,next){
+  // let user = this;
+  let hash = await bcrypt.hash(user.password, 10); //auto gen salt and hash
+  user.password = hash;
+  next();
+  // if (user.isModified('password')) {
+  //   let hash = await bcrypt.hash(user.password, 10); //auto gen salt and hash
+  //   user.password = hash;
+  //   next();
+  //   // bcrypt.genSalt(10,(err, salt)=>{
+  //   //   bcrypt.hash(user.password, salt ,(err,hash)=>{
+  //   //     user.password= hash;
+  //   //     next();
+  //   //   })
+  //   // })
+  // } else {
+  //   next();
+  // }
 
 });
 
-UserSchema.statics.findByCredentials = function (email, password) {
-  let User = this;
-
-  return User.findOne({email}).then((user) => {
-    if (!user) {
-      return Promise.reject();
-    }
-
-    return new Promise((resolve, reject) => {
-      // Use bcrypt.compare to compare password and user.password
-      bcrypt.compare(password, user.password, (err, res) => {
-        if (res) {
-          resolve(user);
-        } else {
-          reject();
-        }
-      });
-    });
+User.findByCredentials = async function (email, password, callback) {
+  // let User = this;
+  User.find({email},async (err, user)=>{
+    if(err)
+    throw err;
+    else {
+      if (!user.length) {
+        // throw new Error('Invalid email ID,User does not exists');
+        callback(false);
+      }else{
+        let result = await bcrypt.compare(password, user[0].password);
+      if (result){
+       callback(user);
+      }
+      else
+        callback(false);
+      }
+      
+  }
   });
 };
 
-UserSchema.statics.getUsers = function(){
+User.getUsers = async function (callback) {
   let User = this;
-  return User.find({}).then((users)=>{
-    return users;
-  }).catch((e)=>{
+  try {
+    User.find({}, async(err, users) => {
+      if (err)
+        throw new Error (err);
+      else{
+        callback(users);      
+      }
+    });
+  } catch (err) {
     return err;
-  })
-}
+  }
+};
 
-let User = mongoose.model('User', UserSchema);
-module.exports = {User}
+module.exports = {
+  User
+}

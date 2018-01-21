@@ -1,24 +1,51 @@
-let mongoose = require('mongoose');
+// let mongoose = require('mongoose');
 
-let Todo = mongoose.model('Todo', {
+// let Todo = mongoose.model('Todo', {
+//   text: {
+//     type: String,
+//     required: true,
+//     minlength: 1,
+//     trim: true
+//   },
+//   completed: {
+//     type: Boolean,
+//     default: false
+//   },
+//   completedAt: {
+//     type: Number,
+//     default: null
+//   },
+//   _creator:{
+//     type:mongoose.Schema.Types.ObjectId,
+//     required:true
+//   }
+// });
+
+let ottoman = require('ottoman');
+let uuid = require('uuid/v4');
+
+let Todo = ottoman.model('Todo', {
   text: {
-    type: String,
+    type: "string",
     required: true,
     minlength: 1,
     trim: true
   },
   completed: {
-    type: Boolean,
+    type: "boolean",
     default: false
   },
   completedAt: {
-    type: Number,
+    type: "number",
     default: null
   },
-  _creator:{
-    type:mongoose.Schema.Types.ObjectId,
-    required:true
+  _creator: {
+    type: "string",
+    required: true
   }
-});
 
-module.exports = {Todo};
+})
+
+module.exports = {
+  Todo
+};
