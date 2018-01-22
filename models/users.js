@@ -39,7 +39,8 @@ ottoman.ensureIndices((err)=>{
   if(err){
     throw err;
   }
-})
+});
+
 User.toJSON = function () {
   let user = this;
   let userObject = user.toObject();
@@ -113,20 +114,6 @@ User.pre("save", async function(user,next){
   let hash = await bcrypt.hash(user.password, 10); //auto gen salt and hash
   user.password = hash;
   next();
-  // if (user.isModified('password')) {
-  //   let hash = await bcrypt.hash(user.password, 10); //auto gen salt and hash
-  //   user.password = hash;
-  //   next();
-  //   // bcrypt.genSalt(10,(err, salt)=>{
-  //   //   bcrypt.hash(user.password, salt ,(err,hash)=>{
-  //   //     user.password= hash;
-  //   //     next();
-  //   //   })
-  //   // })
-  // } else {
-  //   next();
-  // }
-
 });
 
 User.findByCredentials = async function (email, password, callback) {

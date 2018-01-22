@@ -1,12 +1,12 @@
 {
     "test":{
         "PORT":3000,
-        "MONGODB_URI":"couchbase://localhost:8091",
+        "COUCH_URI":"couchbase://localhost:8091",
         "JWT_SECRET":"dfhbuowfowebfwe"
     },
     "development":{
         "PORT":3000,
-        "MONGODB_URI":"couchbase://localhost:8091",
+        "COUCH_URI":"couchbase://localhost:8091",
         "JWT_SECRET":"jbfhwhrbfwfwefwf"
     }
 }

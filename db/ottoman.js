@@ -8,7 +8,7 @@
 let couchbase = require('couchbase');
 let ottoman = require('ottoman');
 
-let cluster = new couchbase.Cluster(process.env.MONGODB_URI);
+let cluster = new couchbase.Cluster(process.env.COUCH_URI);
 cluster.authenticate('Administrator','techjini')
 ottoman.bucket = cluster.openBucket('todo','');
 ottoman.bucket.operationTimeout = 120 * 1000;

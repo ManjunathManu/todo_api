@@ -46,6 +46,19 @@ let Todo = ottoman.model('Todo', {
 
 })
 
+Todo.findTodo=  function (id, userId){
+  return new Promise((resolve , reject)=>{
+    Todo.find({_id:id, _creator:userId}, (err, todo)=>{
+      if(err)
+        reject(err);
+      else if(!todo.length)
+        reject(err);
+      else
+        resolve(todo)
+    });
+  });
+};
+
 module.exports = {
   Todo
 };
