@@ -18,16 +18,16 @@
     "body-parser": "^1.18.2",
     "bootstrap": "^4.0.0-beta.2",
     "chai": "^4.1.2",
-    "chai-http": "^3.0.0",
-    "couchbase": "^2.4.3",
+    "chai-http": "^4.0.0",
+    "couchbase": "^2.5.1",
     "express": "^4.16.2",
     "jQuery": "^1.7.4",
     "jsonwebtoken": "^8.1.0",
     "jsonwebtoken-refresh": "^5.7.0",
     "mongodb": "^2.2.5",
     "mongoose": "^4.13.6",
-    "ottoman": "^1.0.4",
-    "ottoman-in": "^1.2.3",
+    "ottoman": "^1.0.5",
+    "ottoman-in": "^1.2.4",
     "socket.io": "^2.0.4",
     "uuid": "^3.2.1",
     "validator": "^9.2.0"
@@ -36,7 +36,7 @@
     "expect": "^21.2.1",
     "express-formidable": "^1.0.0",
     "mocha": "^4.0.1",
-    "nodemon": "^1.12.5",
+    "nodemon": "^1.18.3",
     "supertest": "^3.0.0"
   }
 }
