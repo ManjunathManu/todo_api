@@ -9,7 +9,10 @@ let couchbase = require('couchbase');
 let ottoman = require('ottoman');
 
 let cluster = new couchbase.Cluster(process.env.COUCH_URI);
+const bucket = cluster.openBucket('todo','');
 cluster.authenticate('Administrator','techjini')
-ottoman.bucket = cluster.openBucket('todo','');
+
+ottoman.store = new ottoman.CbStoreAdapter(bucket, couchbase);
 ottoman.bucket.operationTimeout = 120 * 1000;
+
 module.exports={ottoman};
