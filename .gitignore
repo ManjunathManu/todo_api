@@ -1,0 +1,25 @@
+# Node
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+node_modules
+
+# Logs
+logs
+*.log
+
+# Editor
+.vimrc
+
+# Config
+.env
+
+# Swagger
+swagger.json
+redoc-static.html
+
+# IBM
+*.yml
+
+# directory
+.vscode/*
